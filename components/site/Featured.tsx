@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Icon } from "@/components/brand/Icon";
-import { pageHref } from "@/lib/pages";
+import { featuredHref, pageHref } from "@/lib/pages";
 import type { BrandColor, Featured as FeaturedT, Locale, Stat, TeamMember } from "@/lib/types";
 import { t } from "@/lib/types";
 import { SectionHead } from "./SectionHead";
@@ -385,69 +385,112 @@ function EmbeddedPanel({ data, members, locale, cta, shown }: { data: FeaturedT[
 
 /* ------------------------------------------------------------------ */
 
-export function Featured({ data, members, locale }: { data: FeaturedT; members: TeamMember[]; locale: Locale }) {
-  const [ref, shown] = useShown<HTMLElement>(0.1);
-  const [tab, setTab] = useState(0);
-  const tabs = [
-    { key: "trade", label: data.trade.tab, audience: data.trade.audience, image: data.trade.image, icon: "cart", color: "yellow" as BrandColor },
-    { key: "embedded", label: data.embedded.tab, audience: data.embedded.audience, image: data.embedded.image, icon: "users", color: "cyan" as BrandColor },
-  ];
-  const cta = t(data.cta, locale);
+type Kind = "trade" | "embedded";
 
+function cards(data: FeaturedT) {
+  return [
+    { key: "trade" as Kind, label: data.trade.tab, audience: data.trade.audience, image: data.trade.image, focus: "50% 60%", icon: "cart", color: "yellow" as BrandColor },
+    { key: "embedded" as Kind, label: data.embedded.tab, audience: data.embedded.audience, image: data.embedded.image, focus: "50% 45%", icon: "users", color: "cyan" as BrandColor },
+  ];
+}
+
+/** The two signature services as big photo cards; each opens its own page. */
+export function Featured({ data, locale }: { data: FeaturedT; locale: Locale }) {
+  const [ref, shown] = useShown<HTMLElement>(0.1);
   return (
     <section ref={ref} id="featured" className={`relative overflow-x-clip py-28 md:py-36 ${shown ? "is-shown" : ""}`}>
       <div className="aurora opacity-30" aria-hidden><span className="a2" /><span className="a5" /></div>
       <div className="relative mx-auto max-w-6xl px-5">
         <SectionHead eyebrow={data.eyebrow} title={data.title} subtitle={data.subtitle} locale={locale} />
 
-        <div role="tablist" className="reveal mt-12 grid gap-3 sm:grid-cols-2" style={{ ["--d" as string]: 3 }}>
-          {tabs.map((x, i) => {
-            const on = tab === i;
-            return (
-              <button
-                key={x.key}
-                role="tab"
-                type="button"
-                aria-selected={on}
-                aria-controls={`featured-${x.key}`}
-                onClick={() => setTab(i)}
-                className={`group relative isolate flex min-h-[10rem] items-end gap-4 overflow-hidden rounded-[1.5rem] p-4 text-start ring-2 transition duration-500 sm:min-h-[13rem] sm:p-6 c-${x.color} ${on ? "ring-[color:var(--c)] shadow-[0_30px_70px_-30px_var(--c)]" : "ring-white/10 hover:ring-[color:var(--c)]/50"}`}
-              >
-                {x.image && (
-                  <img
-                    src={x.image}
-                    alt=""
-                    draggable={false}
-                    className={`absolute inset-0 -z-10 h-full w-full object-cover transition duration-700 group-hover:scale-105 ${on ? "" : "opacity-55 grayscale-[.5] group-hover:opacity-80 group-hover:grayscale-0"}`}
-                  />
-                )}
-                <span className="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-ink/65 to-ink/5" />
-                <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl transition duration-500 sm:h-14 sm:w-14 ${on ? "bg-[color:var(--c)] text-ink" : "bg-ink/70 text-[color:var(--c)] ring-1 ring-white/15 backdrop-blur-md group-hover:rotate-[-8deg]"}`}>
-                  <Icon name={x.icon} className="h-6 w-6" />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="font-latin text-xs font-bold text-[color:var(--c)]">{two(i + 1)}</span>
-                  <span className="block text-lg font-bold leading-tight text-white sm:text-2xl">{t(x.label, locale)}</span>
-                  <span className="mt-1 block text-xs leading-5 text-white/65">{t(x.audience, locale)}</span>
-                </span>
-                <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-full transition duration-500 ${on ? "bg-[color:var(--c)] text-ink" : "border border-white/25 text-white/70 backdrop-blur-md group-hover:border-[color:var(--c)]"}`}>
-                  <Icon name={on ? "check" : "arrow"} className={`h-4 w-4 ${on ? "" : "flip-rtl"}`} />
-                </span>
-                <span className={`absolute inset-x-0 bottom-0 h-1 origin-[inline-start] transition duration-500 ${on ? "scale-x-100" : "scale-x-0"}`} style={{ background: "var(--c)" }} />
-              </button>
-            );
-          })}
+        <div className="reveal mt-12 grid gap-3 sm:grid-cols-2" style={{ ["--d" as string]: 3 }}>
+          {cards(data).map((x, i) => (
+            <Link
+              key={x.key}
+              href={featuredHref(locale, x.key)}
+              className={`group relative isolate flex min-h-[12rem] items-end gap-4 overflow-hidden rounded-[1.5rem] p-4 text-start ring-2 ring-white/10 transition duration-500 hover:-translate-y-1 hover:ring-[color:var(--c)] hover:shadow-[0_30px_70px_-30px_var(--c)] sm:min-h-[16rem] sm:p-6 c-${x.color}`}
+            >
+              {x.image && (
+                <img src={x.image} alt="" draggable={false} style={{ objectPosition: x.focus }} className="absolute inset-0 -z-10 h-full w-full object-cover opacity-75 transition duration-700 group-hover:scale-105 group-hover:opacity-100" />
+              )}
+              <span className="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-ink/65 to-ink/5" />
+              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[color:var(--c)] text-ink transition duration-500 group-hover:rotate-[-8deg] sm:h-14 sm:w-14">
+                <Icon name={x.icon} className="h-6 w-6" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="font-latin text-xs font-bold text-[color:var(--c)]">{two(i + 1)}</span>
+                <span className="block text-lg font-bold leading-tight text-white sm:text-2xl">{t(x.label, locale)}</span>
+                <span className="mt-1 block text-xs leading-5 text-white/65">{t(x.audience, locale)}</span>
+              </span>
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/25 text-white backdrop-blur-md transition duration-500 group-hover:border-transparent group-hover:bg-[color:var(--c)] group-hover:text-ink">
+                <Icon name="arrow" className="flip-rtl h-4 w-4" />
+              </span>
+              <span className="absolute inset-x-0 bottom-0 h-1 origin-[inline-start] scale-x-0 transition duration-500 group-hover:scale-x-100" style={{ background: "var(--c)" }} />
+            </Link>
+          ))}
         </div>
+      </div>
+    </section>
+  );
+}
 
-        <div className="reveal mt-12" style={{ ["--d" as string]: 4 }}>
-          <div key={tab} id={`featured-${tabs[tab].key}`} role="tabpanel" style={{ animation: "storyIn .6s var(--ease-out) both" }}>
-            {tab === 0 ? (
-              <TradePanel data={data.trade} locale={locale} cta={cta} shown={shown} />
-            ) : (
-              <EmbeddedPanel data={data.embedded} members={members} locale={locale} cta={cta} shown={shown} />
-            )}
+/** A signature service's own page: photo banner, the full explanation, then a link to the other service. */
+export function FeaturedDetail({ kind, data, members, locale }: { kind: Kind; data: FeaturedT; members: TeamMember[]; locale: Locale }) {
+  const [ref, shown] = useShown<HTMLElement>(0.05);
+  const all = cards(data);
+  const me = all.find((x) => x.key === kind)!;
+  const other = all.find((x) => x.key !== kind)!;
+  const cta = t(data.cta, locale);
+  const ar = locale === "ar";
+  return (
+    <section ref={ref} className={`relative overflow-x-clip pb-24 pt-4 md:pb-32 ${shown ? "is-shown" : ""}`}>
+      <div className="aurora opacity-30" aria-hidden><span className="a2" /><span className="a5" /></div>
+      <div className="relative mx-auto max-w-6xl px-5">
+        <Link href={pageHref(locale, "services")} className="inline-flex items-center gap-2 text-sm font-semibold text-lilac/70 transition hover:text-white">
+          <Icon name="arrow" className="h-4 w-4 rotate-180 flip-rtl" />
+          {ar ? "كل الخدمات" : "All services"}
+        </Link>
+
+        <div className={`reveal relative isolate mt-6 flex min-h-[16rem] items-end overflow-hidden rounded-[2rem] p-6 ring-2 ring-[color:var(--c)] sm:min-h-[22rem] sm:p-10 c-${me.color}`} style={{ ["--d" as string]: 0 }}>
+          {me.image && <img src={me.image} alt="" draggable={false} style={{ objectPosition: me.focus }} className="absolute inset-0 -z-10 h-full w-full object-cover" />}
+          <span className="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-ink/60 to-ink/10" />
+          <div className="flex items-end gap-4 sm:gap-6">
+            <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-[color:var(--c)] text-ink sm:h-20 sm:w-20 sm:rounded-3xl">
+              <Icon name={me.icon} className="h-7 w-7 sm:h-9 sm:w-9" />
+            </span>
+            <div>
+              <span className="eyebrow">{t(data.eyebrow, locale)}</span>
+              <h1 className="mt-2 text-[clamp(2rem,5.5vw,4rem)] font-bold leading-[1.05] text-white">{t(me.label, locale)}</h1>
+              <p className="mt-2 text-sm text-white/70 sm:text-base">{t(me.audience, locale)}</p>
+            </div>
           </div>
         </div>
+
+        <div className="reveal mt-14 md:mt-20" style={{ ["--d" as string]: 1 }}>
+          {kind === "trade" ? (
+            <TradePanel data={data.trade} locale={locale} cta={cta} shown={shown} />
+          ) : (
+            <EmbeddedPanel data={data.embedded} members={members} locale={locale} cta={cta} shown={shown} />
+          )}
+        </div>
+
+        <Link
+          href={featuredHref(locale, other.key)}
+          className={`group relative isolate mt-20 flex items-center gap-4 overflow-hidden rounded-[1.5rem] p-5 ring-2 ring-white/10 transition duration-500 hover:ring-[color:var(--c)] sm:p-6 c-${other.color}`}
+        >
+          {other.image && <img src={other.image} alt="" draggable={false} style={{ objectPosition: other.focus }} className="absolute inset-0 -z-10 h-full w-full object-cover opacity-40 transition duration-700 group-hover:scale-105 group-hover:opacity-60" />}
+          <span className="absolute inset-0 -z-10 bg-gradient-to-l from-ink/40 to-ink rtl:bg-gradient-to-r" />
+          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[color:var(--c)] text-ink">
+            <Icon name={other.icon} className="h-6 w-6" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="text-xs font-semibold text-lilac/60">{ar ? "الخدمة المميزة الثانية" : "The other signature service"}</span>
+            <span className="block text-lg font-bold text-white sm:text-2xl">{t(other.label, locale)}</span>
+          </span>
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/25 text-white transition duration-500 group-hover:border-transparent group-hover:bg-[color:var(--c)] group-hover:text-ink">
+            <Icon name="arrow" className="flip-rtl h-4 w-4" />
+          </span>
+        </Link>
       </div>
     </section>
   );

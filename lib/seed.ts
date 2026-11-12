@@ -288,7 +288,7 @@ export const seed: Content = {
       "en": "Signature services"
     },
     "title": {
-      "ar": "خدمتين نشتغلهن بطريقة ما تلگاها عند غيرنا",
+      "ar": "خدمات مميزة",
       "en": "Two services we run like nobody else"
     },
     "subtitle": {
@@ -340,7 +340,7 @@ export const seed: Content = {
           },
           "icon": "door",
           "color": "cyan",
-          "image": "/mock/featured/zone-entrance.jpg"
+          "image": "/mock/featured/zone-entrance-v2.jpg"
         },
         {
           "title": {
@@ -357,7 +357,7 @@ export const seed: Content = {
           },
           "icon": "tag",
           "color": "green",
-          "image": "/mock/featured/zone-promo.jpg"
+          "image": "/mock/featured/zone-promo-v2.jpg"
         },
         {
           "title": {
@@ -374,7 +374,7 @@ export const seed: Content = {
           },
           "icon": "users",
           "color": "yellow",
-          "image": "/mock/featured/zone-sampling.jpg"
+          "image": "/mock/featured/zone-sampling-v2.jpg"
         },
         {
           "title": {
@@ -391,7 +391,7 @@ export const seed: Content = {
           },
           "icon": "grid",
           "color": "lilac",
-          "image": "/mock/featured/zone-shelves.jpg"
+          "image": "/mock/featured/zone-shelves-v2.jpg"
         },
         {
           "title": {
@@ -408,7 +408,7 @@ export const seed: Content = {
           },
           "icon": "store",
           "color": "orchid",
-          "image": "/mock/featured/zone-endcap.jpg"
+          "image": "/mock/featured/zone-endcap-v2.jpg"
         },
         {
           "title": {
@@ -425,7 +425,7 @@ export const seed: Content = {
           },
           "icon": "receipt",
           "color": "cyan",
-          "image": "/mock/featured/zone-checkout.jpg"
+          "image": "/mock/featured/zone-checkout-v2.jpg"
         }
       ],
       "stats": [
@@ -460,7 +460,7 @@ export const seed: Content = {
           }
         }
       ],
-      "image": "/mock/featured/trade-cover.jpg"
+      "image": "/mock/featured/trade-cover-v3.jpg"
     },
     "embedded": {
       "tab": {
@@ -502,7 +502,7 @@ export const seed: Content = {
             "en": "A photographer and creator covering offers and customers daily"
           },
           "people": 2,
-          "image": "/mock/featured/place-1.jpg"
+          "image": "/mock/featured/place-1-v2.jpg"
         },
         {
           "name": {
@@ -514,7 +514,7 @@ export const seed: Content = {
             "en": "A field marketer running in-branch offers and activations"
           },
           "people": 1,
-          "image": "/mock/featured/place-2.jpg"
+          "image": "/mock/featured/place-2-v2.jpg"
         },
         {
           "name": {
@@ -526,7 +526,7 @@ export const seed: Content = {
             "en": "A creator and community manager speaking to the northern audience"
           },
           "people": 2,
-          "image": "/mock/featured/place-3.jpg"
+          "image": "/mock/featured/place-3-v2.jpg"
         },
         {
           "name": {
@@ -538,7 +538,7 @@ export const seed: Content = {
             "en": "A photographer and campaign coordinator covering openings and events"
           },
           "people": 2,
-          "image": "/mock/featured/place-4.jpg"
+          "image": "/mock/featured/place-4-v2.jpg"
         }
       ],
       "steps": [
@@ -681,8 +681,8 @@ export const seed: Content = {
           }
         }
       ],
-      "image": "/mock/featured/embedded-cover.jpg",
-      "hqImage": "/mock/featured/place-hq.jpg"
+      "image": "/mock/featured/embedded-cover-v3.jpg",
+      "hqImage": "/mock/featured/place-hq-v2.jpg"
     }
   },
   team: {
@@ -755,7 +755,7 @@ export const seed: Content = {
         tags: { ar: "بحث، تموضع، خطة سنوية", en: "Research, Positioning, Annual plan" },
         color: "lilac",
         icon: "compass",
-        image: "/mock/services/strategy.jpg",
+        image: "/mock/services/strategy-v2.jpg",
       },
       {
         title: { ar: "إدارة الحملات الإعلانية", en: "Campaign management" },
@@ -763,7 +763,7 @@ export const seed: Content = {
         tags: { ar: "ميتا، تيك توك، جوجل، سناب", en: "Meta, TikTok, Google, Snap" },
         color: "orchid",
         icon: "target",
-        image: "/mock/services/campaigns.jpg",
+        image: "/mock/services/campaigns-v2.jpg",
       },
       {
         title: { ar: "إدارة السوشيال ميديا", en: "Social media management" },
@@ -771,7 +771,7 @@ export const seed: Content = {
         tags: { ar: "خطة محتوى، إدارة، مجتمع", en: "Content plan, Community, Moderation" },
         color: "cyan",
         icon: "chat",
-        image: "/mock/services/social.jpg",
+        image: "/mock/services/social-v2.jpg",
       },
       {
         title: { ar: "صناعة المحتوى والتصوير", en: "Content & production" },
@@ -779,7 +779,7 @@ export const seed: Content = {
         tags: { ar: "ريلز، تصوير، مونتاج", en: "Reels, Photo, Editing" },
         color: "yellow",
         icon: "camera",
-        image: "/mock/services/content.jpg",
+        image: "/mock/services/content-v2.jpg",
       },
       {
         title: { ar: "الهوية البصرية", en: "Branding" },
@@ -787,7 +787,7 @@ export const seed: Content = {
         tags: { ar: "شعار، دليل هوية، نبرة", en: "Logo, Guidelines, Voice" },
         color: "green",
         icon: "spark",
-        image: "/mock/services/branding.jpg",
+        image: "/mock/services/branding-v2.jpg",
       },
       {
         title: { ar: "التسويق بالمؤثرين", en: "Influencer marketing" },
@@ -795,7 +795,7 @@ export const seed: Content = {
         tags: { ar: "اختيار، تنسيق، قياس", en: "Selection, Briefing, Tracking" },
         color: "lilac",
         icon: "star",
-        image: "/mock/services/influencer.jpg",
+        image: "/mock/services/influencer-v2.jpg",
       },
     ],
   },

@@ -152,8 +152,7 @@ export const SCHEMAS: EditorSchema[] = [
   {
     key: "team",
     title: "فريق ماجك",
-    description: "قسم \"فريقنا\": النقاط وبطاقات أعضاء الفريق (صورهم تُستخدم أيضاً بخدمة الفريق داخل الشركة).",
-    anchor: "team",
+    description: "أعضاء الفريق وصورهم — تنعرض بخدمة الفريق داخل الشركة وبالعروض التقديمية (صفحة الفريق ملغية من الموقع).",
     fields: [
       ...head(),
       { type: "list", key: "points", label: "النقاط", titleKey: "title", item: [{ type: "l", key: "title", label: "العنوان" }, { type: "l", key: "body", label: "الوصف", multiline: true }] },

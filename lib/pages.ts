@@ -1,7 +1,7 @@
 import type { L, Locale, SectionKey, Settings } from "./types";
 
 /** Site pages. A section normally lives on one page (featured services sit on Home and Services); order inside a page follows the dashboard's section order. */
-export type PageSlug = "" | "services" | "work" | "team" | "contact";
+export type PageSlug = "" | "services" | "work" | "contact";
 
 export type SitePage = { slug: PageSlug; label: L; blurb: L; sections: SectionKey[] };
 
@@ -25,12 +25,6 @@ export const PAGES: SitePage[] = [
     sections: ["cases", "beforeAfter"],
   },
   {
-    slug: "team",
-    label: { ar: "الفريق", en: "Team" },
-    blurb: { ar: "فريق ماجك يشتغل من داخل شركتك.", en: "The Magic team, working from inside your company." },
-    sections: ["team"],
-  },
-  {
     slug: "contact",
     label: { ar: "تواصل", en: "Contact" },
     blurb: { ar: "احچيلنا عن مشروعك ونرجعلك بسرعة.", en: "Tell us about your project and we'll get back fast." },
@@ -42,6 +36,18 @@ export const SUB_PAGES = PAGES.filter((p) => p.slug !== "");
 
 export function pageHref(locale: Locale, slug: PageSlug) {
   return slug ? `/${locale}/${slug}` : `/${locale}`;
+}
+
+/** The two signature services each get their own page under /services. */
+export const FEATURED_SLUGS = { trade: "trade-marketing", embedded: "in-house-team" } as const;
+export type FeaturedKind = keyof typeof FEATURED_SLUGS;
+
+export function featuredHref(locale: Locale, kind: FeaturedKind) {
+  return `${pageHref(locale, "services")}/${FEATURED_SLUGS[kind]}`;
+}
+
+export function featuredKind(slug: string): FeaturedKind | undefined {
+  return (Object.keys(FEATURED_SLUGS) as FeaturedKind[]).find((k) => FEATURED_SLUGS[k] === slug);
 }
 
 /** Visible sections of a page, in the order set in the dashboard. */

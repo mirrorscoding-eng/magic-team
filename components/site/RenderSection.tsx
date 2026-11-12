@@ -17,7 +17,7 @@ export function RenderSection({ k, content, locale, cases }: { k: SectionKey; co
     case "clients":
       return <Clients data={content.clients} locale={locale} />;
     case "featured":
-      return content.featured ? <Featured data={content.featured} members={content.team.members} locale={locale} /> : null;
+      return content.featured ? <Featured data={content.featured} locale={locale} /> : null;
     case "team":
       return <Team data={content.team} locale={locale} />;
     case "cases":
