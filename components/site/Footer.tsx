@@ -21,14 +21,12 @@ export function PageCta({ locale, next, showContact }: { locale: Locale; next?: 
           {showContact && (
             <Link href={pageHref(locale, "contact")} className="btn btn-primary px-7! py-4! text-lg!">
               {ar ? "خل نحچي" : "Let's talk"}
-              <span className="arrow h-10! w-10!"><Icon name="arrow" className="flip-rtl h-5 w-5" /></span>
             </Link>
           )}
           {next && (
             <Link href={pageHref(locale, next.slug)} className="btn btn-ghost px-7! py-4! text-lg! text-white!">
               {ar ? "التالي: " : "Next: "}
               {t(next.label, locale)}
-              <span className="arrow h-10! w-10! bg-lilac! text-ink!"><Icon name="arrow" className="flip-rtl h-5 w-5" /></span>
             </Link>
           )}
         </div>

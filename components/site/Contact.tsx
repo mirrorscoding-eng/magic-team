@@ -54,7 +54,6 @@ export function Contact({ data, settings, locale }: { data: CT; settings: Settin
               {state?.error && <p className="text-sm text-orchid">{ar ? "اكتب اسمك ورقم الهاتف أو الإيميل." : "Please add your name and a phone or email."}</p>}
               <button disabled={pending} className="btn btn-primary w-full justify-center disabled:opacity-60">
                 {pending ? (ar ? "جاري الإرسال..." : "Sending...") : t(data.button, locale)}
-                <span className="arrow flip-rtl"><Icon name="arrow" className="h-4 w-4" /></span>
               </button>
             </>
           )}

@@ -74,7 +74,6 @@ function Cta({ label, locale, className = "" }: { label: string; locale: Locale;
   return (
     <Link href={pageHref(locale, "contact")} className={`btn btn-primary mt-8 self-start ${className}`}>
       {label}
-      <span className="arrow"><Icon name="arrow" className="flip-rtl h-4 w-4" /></span>
     </Link>
   );
 }

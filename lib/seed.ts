@@ -253,8 +253,6 @@ export const seed: Content = {
     ctaSecondary: { ar: "خل نحچي عن مشروعك", en: "Let's talk about your project" },
     pills: [
       { label: { ar: "MARKETING", en: "MARKETING" }, color: "lilac" },
-      { label: { ar: "TEAM", en: "TEAM" }, color: "green" },
-      { label: { ar: "26", en: "26" }, color: "green" },
     ],
     cards: [
       { image: "/brand/posts/post-1.jpg", alt: "Your ad was generated using AI?" },

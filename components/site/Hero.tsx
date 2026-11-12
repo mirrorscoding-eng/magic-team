@@ -1,7 +1,6 @@
 "use client";
 import { useContext, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Icon } from "@/components/brand/Icon";
 import { pageHref } from "@/lib/pages";
 import type { Hero as HeroT, Locale } from "@/lib/types";
 import { t } from "@/lib/types";
@@ -135,11 +134,9 @@ export function Hero({ data, locale }: { data: HeroT; locale: Locale }) {
           <div className="reveal mt-10 flex flex-wrap gap-3" style={{ ["--d" as string]: 5 }}>
             <Link href={pageHref(locale, "work")} className="btn btn-primary px-7! py-4! text-lg!">
               {t(data.ctaPrimary, locale)}
-              <span className="arrow h-10! w-10!"><Icon name="arrow" className="flip-rtl h-5 w-5" /></span>
             </Link>
             <Link href={pageHref(locale, "contact")} className="btn btn-ghost px-7! py-4! text-lg! text-white!">
               {t(data.ctaSecondary, locale)}
-              <span className="arrow h-10! w-10! bg-lilac! text-ink!"><Icon name="arrow" className="flip-rtl h-5 w-5" /></span>
             </Link>
           </div>
         </div>

@@ -115,7 +115,23 @@ html.lenis body {
 }
 html[lang="ar"] .h-section {
   letter-spacing: 0;
-  line-height: 1.25;
+  line-height: 1.4;
+}
+
+/*
+ * Arabic needs room for the dots and hamzas above and below the letters: tight line heights
+ * make lines collide, and clipped gradient text cuts the marks off (يمشي reads as يمشى).
+ * These rules are unlayered, so they win over Tailwind's leading-* utilities on Arabic pages
+ * while leaving English and Latin display text (font-latin, font-display, dir=ltr) as designed.
+ */
+html[lang="ar"] :is(h1, h2, h3, h4, h5, .leading-none, .leading-tight, .leading-snug, [class*="leading-[0"], [class*="leading-[1.0"], [class*="leading-[1.1"], [class*="leading-[1.2"]):not(.font-latin, .font-display, [dir="ltr"], [dir="ltr"] *) {
+  line-height: 1.4;
+}
+html[lang="ar"] :is(.bg-clip-text, .text-gradient) {
+  padding-block: 0.2em;
+  margin-block: -0.2em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 .lead {
   color: rgba(250, 195, 253, 0.72);

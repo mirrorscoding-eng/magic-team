@@ -66,9 +66,8 @@ export function Nav({ locale, pages }: { locale: Locale; pages: NavPage[] }) {
             <Icon name="present" className="h-5 w-5 text-lilac" />
           </Link>
           {hasContact && (
-            <Link href={pageHref(locale, "contact")} aria-current={current === "contact" ? "page" : undefined} className="btn btn-primary py-2.5! pe-2.5! ps-6!">
+            <Link href={pageHref(locale, "contact")} aria-current={current === "contact" ? "page" : undefined} className="btn btn-primary py-3! px-6!">
               {ar ? "خل نحچي" : "Let's talk"}
-              <span className="arrow h-9! w-9!"><Icon name="arrow" className="flip-rtl h-4 w-4" /></span>
             </Link>
           )}
           <button
