@@ -2,6 +2,7 @@ import { Footer } from "@/components/site/Footer";
 import { Nav } from "@/components/site/Nav";
 import { Notice } from "@/components/site/Notice";
 import { SmoothScroll } from "@/components/site/SmoothScroll";
+import { WaveField } from "@/components/site/WaveField";
 import { livePages } from "@/lib/pages";
 import { getContent } from "@/lib/store";
 import { t, type Locale } from "@/lib/types";
@@ -15,6 +16,7 @@ export default async function SiteLayout({ children, params }: LayoutProps<"/[lo
   return (
     <>
       <SmoothScroll />
+      <WaveField />
       <Nav locale={locale} pages={pages.map(({ slug, label }) => ({ slug, label }))} />
       {children}
       <Footer locale={locale} settings={settings} pages={pages} />

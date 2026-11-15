@@ -37,7 +37,7 @@ html[lang="en"] body {
   font-family: var(--font-montserrat), var(--font-arabic), sans-serif;
 }
 body {
-  background: var(--ink);
+  /* the page colour lives on <html> so the fixed wave canvas (z-index -1) shows through */
   min-height: 100dvh;
   overflow-x: clip;
 }
