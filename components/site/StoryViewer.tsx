@@ -5,6 +5,7 @@ import { Icon } from "@/components/brand/Icon";
 import type { CaseStudy, Locale } from "@/lib/types";
 import { t } from "@/lib/types";
 import { fmtMetric, uplift } from "@/lib/format";
+import { CaseBackdrop, CaseLogo } from "./CaseArt";
 
 type Frame = { kind: "cover" | "chapter" | "metrics"; key?: "challenge" | "idea" | "execution" | "result" };
 const FRAMES: Frame[] = [
@@ -24,14 +25,16 @@ export function StoryViewer({ cases, start, locale, onClose }: { cases: CaseStud
   const down = useRef(0);
   const c = cases[ci];
   const rtl = locale === "ar";
+  // stories without before/after numbers end on the result chapter
+  const frames = c.metrics.length ? FRAMES : FRAMES.filter((f) => f.kind !== "metrics");
 
   const next = useCallback(() => {
-    if (fi < FRAMES.length - 1) setFi(fi + 1);
+    if (fi < frames.length - 1) setFi(fi + 1);
     else if (ci < cases.length - 1) {
       setCi(ci + 1);
       setFi(0);
     } else onClose();
-  }, [fi, ci, cases.length, onClose]);
+  }, [fi, frames.length, ci, cases.length, onClose]);
   const prev = useCallback(() => {
     if (fi > 0) setFi(fi - 1);
     else if (ci > 0) {
@@ -65,7 +68,7 @@ export function StoryViewer({ cases, start, locale, onClose }: { cases: CaseStud
     return () => window.removeEventListener("keydown", onKey, true);
   }, [next, prev, onClose, rtl]);
 
-  const frame = FRAMES[fi];
+  const frame = frames[Math.min(fi, frames.length - 1)];
   const chapter = frame.key ? c[frame.key] : null;
   const bg = chapter?.image || c.cover;
 
@@ -84,8 +87,10 @@ export function StoryViewer({ cases, start, locale, onClose }: { cases: CaseStud
 
   return createPortal(
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-ink/80 backdrop-blur-xl" dir={rtl ? "rtl" : "ltr"} role="dialog" aria-modal aria-label={c.client}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={bg} alt="" className="pointer-events-none absolute inset-0 h-full w-full scale-110 object-cover opacity-30 blur-3xl" />
+      {bg && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={bg} alt="" className="pointer-events-none absolute inset-0 h-full w-full scale-110 object-cover opacity-30 blur-3xl" />
+      )}
       <button onClick={onClose} className="absolute end-5 top-5 z-20 grid h-11 w-11 place-items-center rounded-full bg-white/10 text-white hover:bg-white/20" aria-label="Close">
         <Icon name="close" />
       </button>
@@ -106,13 +111,17 @@ export function StoryViewer({ cases, start, locale, onClose }: { cases: CaseStud
         onPointerUp={onPointerUp}
         onPointerLeave={() => setPaused(false)}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img key={bg + fi} src={bg} alt="" className="absolute inset-0 h-full w-full object-cover" style={{ animation: "kenburns 8s ease-out both" }} />
+        {bg ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img key={bg + fi} src={bg} alt="" className="absolute inset-0 h-full w-full object-cover" style={{ animation: "kenburns 8s ease-out both" }} />
+        ) : (
+          <CaseBackdrop c={c} />
+        )}
         <div className="absolute inset-0 bg-gradient-to-b from-ink/70 via-ink/10 to-ink/95" />
 
         <div className="absolute inset-x-0 top-0 z-10 p-4">
           <div className="flex gap-1.5" dir={rtl ? "rtl" : "ltr"}>
-            {FRAMES.map((_, i) => (
+            {frames.map((_, i) => (
               <div key={`${ci}-${i}`} className={`story-progress ${i < fi ? "done" : ""} ${i === fi ? "active" : ""}`}>
                 <i onAnimationEnd={i === fi ? next : undefined} />
               </div>
@@ -120,12 +129,11 @@ export function StoryViewer({ cases, start, locale, onClose }: { cases: CaseStud
           </div>
           <div className="mt-4 flex items-center gap-3">
             <div className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full bg-ink ring-2 ring-orchid">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={c.logo} alt="" className="h-[55%] w-[55%] object-cover object-left" />
+              <CaseLogo c={c} className="h-[60%] w-[60%]" />
             </div>
             <div className="leading-tight">
               <div className="font-latin text-sm font-bold">{c.client}</div>
-              <div className="text-xs text-lilac/70">{t(c.industry, locale)} · {t(c.duration, locale)}</div>
+              <div className="text-xs text-lilac/70">{[t(c.industry, locale), t(c.duration, locale)].filter(Boolean).join(" · ")}</div>
             </div>
             {paused && <Icon name="pause" className="ms-auto h-4 w-4 text-white/80" />}
           </div>
@@ -134,7 +142,7 @@ export function StoryViewer({ cases, start, locale, onClose }: { cases: CaseStud
         <div key={`${ci}-${fi}`} className="absolute inset-x-0 bottom-0 z-10 p-7 pb-10" style={{ animation: "storyIn .7s cubic-bezier(.16,1,.3,1) both" }}>
           {frame.kind === "cover" && (
             <>
-              <span className={`pill c-${c.color}`}>{locale === "ar" ? "قصة نجاح" : "Success story"}</span>
+              <span className={`pill c-${c.color}`}>{locale === "ar" ? "قصة مشروع" : "Project story"}</span>
               <h3 className="mt-4 text-4xl font-bold leading-tight">{t(c.headline, locale)}</h3>
               <p className="mt-4 flex items-center gap-2 text-sm text-lilac/80">
                 <Icon name={rtl ? "chevL" : "chevR"} className="h-4 w-4" /> {locale === "ar" ? "اضغط للمتابعة" : "Tap to continue"}

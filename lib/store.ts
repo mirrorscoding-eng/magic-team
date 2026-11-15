@@ -37,6 +37,8 @@ export async function getContent(): Promise<Content> {
   }
   // fill any keys added after the file was created
   const content = { ...structuredClone(seed), ...stored } as Content;
+  // the portfolio moved from one flat list to per-project pages
+  if (!Array.isArray(content.gallery?.projects)) content.gallery = structuredClone(seed.gallery);
   const have = new Set(content.settings.sections.map((s) => s.key));
   for (const key of SECTION_KEYS) {
     if (have.has(key)) continue;

@@ -272,8 +272,9 @@ html[dir="rtl"] .flip-rtl { transform: scaleX(-1); }
 .marquee-track {
   display: flex;
   flex-shrink: 0;
-  gap: 1.25rem;
-  padding-inline-end: 1.25rem;
+  align-items: center;
+  gap: 3.5rem;
+  padding-inline-end: 3.5rem;
   animation: marquee var(--speed, 40s) linear infinite;
 }
 .marquee.reverse .marquee-track { animation-direction: reverse; }
@@ -285,22 +286,17 @@ html[dir="rtl"] .marquee-track { animation-name: marquee-rtl; }
 .logo-tile {
   display: grid;
   place-items: center;
-  width: 15rem;
-  height: 6.5rem;
-  border-radius: 1.4rem;
-  border: 1px solid var(--line);
-  background: rgba(58, 10, 66, 0.35);
-  transition: background 0.4s, border-color 0.4s, transform 0.4s var(--ease-out);
+  width: 11rem;
+  height: 6rem;
+  transition: transform 0.4s var(--ease-out);
 }
 .logo-tile img {
-  width: 72%;
-  max-height: 3rem;
+  max-width: 100%;
+  max-height: 4.5rem;
   object-fit: contain;
-  filter: grayscale(1) brightness(1.6) opacity(0.55);
-  transition: filter 0.45s;
 }
-.logo-tile:hover { background: rgba(235, 112, 250, 0.1); border-color: rgba(235, 112, 250, 0.5); transform: translateY(-4px); }
-.logo-tile:hover img { filter: none; }
+.logo-tile:hover { transform: scale(1.08); }
+
 
 /* ---------- Multiplayer cursors (team section) ---------- */
 .mp-cursor {
@@ -482,3 +478,19 @@ html[dir="rtl"] .story-progress > i { transform-origin: right; }
 @keyframes revealIn { from { opacity: 0; transform: translateY(36px); filter: blur(6px); } }
 @keyframes stackIn { from { opacity: 0; transform: translateY(80px) rotate(4deg) scale(0.92); } }
 
+
+/* ---------- Portfolio gallery ---------- */
+.gallery-tile {
+  animation: gallery-in 0.8s var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+@keyframes gallery-in {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+}
+.gallery-lightbox { animation: fade-in 0.3s ease both; }
+.gallery-zoom { animation: gallery-zoom 0.5s var(--ease-out) both; }
+@keyframes fade-in { from { opacity: 0; } }
+@keyframes gallery-zoom { from { opacity: 0; transform: scale(0.94); } }
+@media (prefers-reduced-motion: reduce) {
+  .gallery-tile, .gallery-lightbox, .gallery-zoom { animation: none; }
+}

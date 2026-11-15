@@ -44,3 +44,6 @@ data/messages.json
 data/uploads/*
 !data/uploads/.gitkeep
 .env.local
+
+# raw client material (642MB) — optimized copies live in public/work and public/clients
+/مصادر/

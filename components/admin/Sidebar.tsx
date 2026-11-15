@@ -15,6 +15,7 @@ const GROUPS: { title: string; items: { href: string; label: string; icon: strin
       { href: "/admin/clients", label: "علامات وثقت بنا", icon: "star" },
       { href: "/admin/featured", label: "خدمات مميزة", icon: "star" },
       { href: "/admin/team", label: "فريق ماجك", icon: "chat" },
+      { href: "/admin/gallery", label: "معرض الأعمال", icon: "grid" },
       { href: "/admin/cases", label: "قصص النجاح", icon: "play" },
       { href: "/admin/beforeAfter", label: "قبل وبعد ماجك", icon: "wand" },
       { href: "/admin/manifesto", label: "البيان", icon: "bolt" },

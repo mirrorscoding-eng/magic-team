@@ -4,6 +4,7 @@ import gsap from "gsap";
 import { Icon } from "@/components/brand/Icon";
 import type { BeforeAfter as BAT, CaseStudy, Locale } from "@/lib/types";
 import { t } from "@/lib/types";
+import { CaseLogo } from "./CaseArt";
 import { fmtMetric, uplift } from "@/lib/format";
 import { useShown } from "./shown";
 
@@ -225,8 +226,7 @@ export function BeforeAfter({ data, items, locale }: { data: BAT; items: CaseStu
                 onClick={() => selectCase(i)}
                 className={`flex items-center gap-2 rounded-full border px-4 py-2 transition ${i === ci ? "border-orchid bg-orchid/15" : "border-[var(--line)] opacity-60 hover:opacity-100"}`}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={it.logo} alt="" className="h-5 w-auto" />
+                <CaseLogo c={it} className="h-5 w-auto max-w-28" />
                 <span className="sr-only">{it.client}</span>
               </button>
             ))}

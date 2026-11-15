@@ -11,6 +11,7 @@ export const SECTION_KEYS = [
   "clients",
   "featured",
   "team",
+  "gallery",
   "cases",
   "beforeAfter",
   "manifesto",
@@ -57,6 +58,12 @@ export type Team = {
   points: { title: L; body: L }[];
   members: TeamMember[];
 };
+
+export type GalleryCategory = "photo" | "branding" | "design" | "video";
+export type GalleryItem = { title: L; category: GalleryCategory; image: string; video?: string };
+/** One client project: its own page at /work/<slug> with all of its work. */
+export type Project = { slug: string; client: string; logo: string; color: BrandColor; title: L; summary: L; cover: string; items: GalleryItem[] };
+export type Gallery = { eyebrow: L; title: L; subtitle: L; more: L; projects: Project[] };
 
 export type Metric = {
   label: L;
@@ -165,6 +172,7 @@ export type Content = {
   clients: Clients;
   featured: Featured;
   team: Team;
+  gallery: Gallery;
   cases: Cases;
   beforeAfter: BeforeAfter;
   manifesto: Manifesto;
@@ -192,6 +200,7 @@ export const SECTION_LABELS: Record<SectionKey, L> = {
   clients: { ar: "علامات وثقت بنا", en: "Trusted by" },
   featured: { ar: "خدمات مميزة", en: "Signature services" },
   team: { ar: "فريق ماجك", en: "Magic team" },
+  gallery: { ar: "معرض الأعمال", en: "Portfolio" },
   cases: { ar: "ماذا حققنا", en: "Case stories" },
   beforeAfter: { ar: "قبل وبعد ماجك", en: "Before / After" },
   manifesto: { ar: "البيان", en: "Manifesto" },

@@ -4,6 +4,7 @@ import { Cases } from "./Cases";
 import { Clients } from "./Clients";
 import { Contact } from "./Contact";
 import { Featured } from "./Featured";
+import { Gallery } from "./Gallery";
 import { Hero } from "./Hero";
 import { Manifesto } from "./Manifesto";
 import { Services } from "./Services";
@@ -20,10 +21,14 @@ export function RenderSection({ k, content, locale, cases }: { k: SectionKey; co
       return content.featured ? <Featured data={content.featured} locale={locale} /> : null;
     case "team":
       return <Team data={content.team} locale={locale} />;
+    case "gallery":
+      return content.gallery?.projects?.length ? <Gallery data={content.gallery} locale={locale} /> : null;
     case "cases":
       return items.length ? <Cases data={content.cases} items={items} locale={locale} /> : null;
-    case "beforeAfter":
-      return items.length ? <BeforeAfter data={content.beforeAfter} items={items} locale={locale} /> : null;
+    case "beforeAfter": {
+      const withNumbers = items.filter((c) => c.metrics.length);
+      return withNumbers.length ? <BeforeAfter data={content.beforeAfter} items={withNumbers} locale={locale} /> : null;
+    }
     case "manifesto":
       return <Manifesto data={content.manifesto} locale={locale} />;
     case "services":

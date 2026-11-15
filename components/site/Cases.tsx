@@ -7,6 +7,7 @@ import { uplift } from "@/lib/format";
 import { SectionHead } from "./SectionHead";
 import { Reveal } from "./shown";
 import { StoryViewer } from "./StoryViewer";
+import { CaseBackdrop, CaseLogo } from "./CaseArt";
 
 export function Cases({ data, items, locale }: { data: CasesT; items: CaseStudy[]; locale: Locale }) {
   const [open, setOpen] = useState<number | null>(null);
@@ -16,13 +17,12 @@ export function Cases({ data, items, locale }: { data: CasesT; items: CaseStudy[
         <div className="flex flex-wrap items-end justify-between gap-8">
           <SectionHead eyebrow={data.eyebrow} title={data.title} subtitle={data.subtitle} locale={locale} />
           {/* story rings, like social stories */}
-          <div className="reveal flex gap-4" style={{ ["--d" as string]: 3 }}>
+          <div className="reveal flex max-w-full gap-4 overflow-x-auto pb-1" style={{ ["--d" as string]: 3 }}>
             {items.map((c, i) => (
               <button key={c.id} onClick={() => setOpen(i)} className="group flex flex-col items-center gap-2" aria-label={c.client}>
                 <span className="story-ring block">
                   <span className="grid h-16 w-16 place-items-center overflow-hidden rounded-full border-[3px] border-ink bg-ink-2 md:h-[4.5rem] md:w-[4.5rem]">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={c.logo} alt="" className="h-[52%] w-[52%] object-cover object-left" />
+                    <CaseLogo c={c} className="h-[62%] w-[62%]" />
                   </span>
                 </span>
                 <span className="max-w-20 truncate font-latin text-[11px] text-lilac/70 group-hover:text-white">{c.client}</span>
@@ -42,13 +42,16 @@ export function Cases({ data, items, locale }: { data: CasesT; items: CaseStudy[
                 style={{ ["--d" as string]: 4 + i }}
               >
                 <div className={`relative ${i === 0 && items.length % 2 === 1 ? "aspect-[21/9]" : "aspect-[16/11]"} overflow-hidden`}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={c.cover} alt="" className="absolute inset-0 h-full w-full object-cover transition duration-[1.2s] ease-out group-hover:scale-105" loading="lazy" />
+                  {c.cover ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={c.cover} alt="" className="absolute inset-0 h-full w-full object-cover transition duration-[1.2s] ease-out group-hover:scale-105" loading="lazy" />
+                  ) : (
+                    <CaseBackdrop c={c} className="transition duration-[1.2s] ease-out group-hover:scale-105" />
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent" />
                   <div className="absolute inset-x-0 top-0 flex items-center justify-between p-5">
                     <span className="flex items-center gap-2 rounded-full bg-ink/60 px-3 py-1.5 backdrop-blur">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={c.logo} alt="" className="h-5 w-auto" />
+                      <CaseLogo c={c} className="h-5 w-auto max-w-28" />
                     </span>
                     <span className="pill">{t(c.industry, locale)}</span>
                   </div>

@@ -7,7 +7,7 @@ import { createToken, SESSION_COOKIE } from "@/lib/session";
 import { getContent, resetContent, saveContentKey, updateMessages } from "@/lib/store";
 import { SECTION_KEYS, type Content, type ContentKey, type SectionKey } from "@/lib/types";
 
-const KEYS: ContentKey[] = ["settings", "hero", "clients", "featured", "team", "cases", "beforeAfter", "manifesto", "services", "contact", "presentations"];
+const KEYS: ContentKey[] = ["settings", "hero", "clients", "featured", "team", "gallery", "cases", "beforeAfter", "manifesto", "services", "contact", "presentations"];
 
 export async function login(_prev: { error?: string } | null, form: FormData) {
   const pass = String(form.get("password") ?? "");

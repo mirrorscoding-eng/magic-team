@@ -21,8 +21,8 @@ export const PAGES: SitePage[] = [
   {
     slug: "work",
     label: { ar: "أعمالنا", en: "Work" },
-    blurb: { ar: "قصص عملائنا، والأرقام قبل ماجك وبعدها.", en: "Client stories, and the numbers before and after Magic." },
-    sections: ["cases", "beforeAfter"],
+    blurb: { ar: "مشاريعنا وقصص عملائنا، والأرقام قبل ماجك وبعدها.", en: "Our projects, client stories, and the numbers before and after Magic." },
+    sections: ["gallery", "cases", "beforeAfter"],
   },
   {
     slug: "contact",
@@ -48,6 +48,11 @@ export function featuredHref(locale: Locale, kind: FeaturedKind) {
 
 export function featuredKind(slug: string): FeaturedKind | undefined {
   return (Object.keys(FEATURED_SLUGS) as FeaturedKind[]).find((k) => FEATURED_SLUGS[k] === slug);
+}
+
+/** Each portfolio project has its own page under /work. */
+export function projectHref(locale: Locale, slug: string) {
+  return `${pageHref(locale, "work")}/${slug}`;
 }
 
 /** Visible sections of a page, in the order set in the dashboard. */

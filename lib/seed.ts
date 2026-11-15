@@ -1,216 +1,439 @@
-import type { CaseStudy, Content, Metric } from "./types";
-
-const m = (
-  ar: string,
-  en: string,
-  before: number,
-  after: number,
-  opts: Partial<Pick<Metric, "prefix" | "suffix" | "decimals" | "lowerIsBetter">> = {},
-): Metric => ({
-  label: { ar, en },
-  before,
-  after,
-  prefix: opts.prefix ?? "",
-  suffix: opts.suffix ?? "",
-  decimals: opts.decimals ?? 0,
-  lowerIsBetter: opts.lowerIsBetter ?? false,
-});
-
-const img = (id: string, part: string) => `/mock/cases/${id}-${part}.svg`;
+import type { CaseStudy, Content } from "./types";
 
 const cases: CaseStudy[] = [
   {
-    id: "dijla",
-    client: "Dijla Roasters",
-    logo: "/mock/logos/dijla.svg",
-    industry: { ar: "سلسلة مقاهي", en: "Coffee chain" },
-    color: "yellow",
-    duration: { ar: "٨ أشهر", en: "8 months" },
-    headline: { ar: "من مقهى محلي إلى ترند المدينة", en: "From a local café to the city's trend" },
-    cover: img("dijla", "cover"),
-    challenge: {
-      title: { ar: "التحدي", en: "The challenge" },
-      body: {
-        ar: "قهوة ممتازة، بس محد يعرفها. حساب إنستغرام بـ ٤ آلاف متابع، إعلانات عشوائية، وفروع جديدة تفتح بدون جمهور ينتظرها.",
-        en: "Great coffee that nobody knew about. 4K followers, random ads, and new branches opening with no audience waiting.",
-      },
-      image: img("dijla", "challenge"),
+    "id": "geogres",
+    "client": "GeoGres",
+    "logo": "",
+    "industry": {
+      "ar": "بورسلان وسيراميك",
+      "en": "Porcelain tiles"
     },
-    idea: {
-      title: { ar: "الفكرة", en: "The idea" },
-      body: {
-        ar: "حوّلنا كل كوب إلى قصة: حملة \"فنجانك يحچي\" — كل زبون يصوّر كوبه ويحچي قصته، والأحسن يطلع على شاشة الفرع.",
-        en: "We turned every cup into a story: \"Your cup talks\" — customers film their cup and share a story; the best ones play on the branch screen.",
-      },
-      image: img("dijla", "idea"),
+    "color": "cyan",
+    "duration": {
+      "ar": "شهرين",
+      "en": "2 months"
     },
-    execution: {
-      title: { ar: "التنفيذ", en: "The execution" },
-      body: {
-        ar: "٤٠ ريلز بالشهر، تعاون مع ١٢ صانع محتوى، حملات ميتا وتيك توك موجهة حسب كل فرع، ونظام ولاء مربوط بالواتساب.",
-        en: "40 reels a month, 12 creator collabs, Meta & TikTok campaigns targeted per branch, and a WhatsApp-linked loyalty flow.",
-      },
-      image: img("dijla", "execution"),
+    "headline": {
+      "ar": "من ٣٬٥٠٠ إلى ٨٬٨٤٩ متابع بشهرين",
+      "en": "From 3,500 to 8,849 followers in two months"
     },
-    result: {
-      title: { ar: "النتيجة", en: "The result" },
-      body: {
-        ar: "الطوابير صارت إعلان مجاني. ٣ فروع جديدة افتتحت ممتلئة من أول يوم.",
-        en: "The queues became free advertising. 3 new branches opened fully booked from day one.",
+    "cover": "",
+    "challenge": {
+      "title": {
+        "ar": "التحدي",
+        "en": "The challenge"
       },
-      image: img("dijla", "result"),
+      "body": {
+        "ar": "علامة بورسلان بجمهور صغير على السوشيال: ٣٬٥٠٠ متابع بكل المنصات، وقناة تيك توك بعدها ما انطلقت.",
+        "en": "A porcelain brand with a small social audience: 3,500 followers across all platforms, and no TikTok channel yet."
+      },
+      "image": ""
     },
-    metrics: [
-      m("المتابعين", "Followers", 4200, 86000, { suffix: "+" }),
-      m("الطلبات الشهرية", "Monthly orders", 1200, 9800),
-      m("تكلفة العميل", "Cost per lead", 4.5, 0.9, { prefix: "$", decimals: 1, lowerIsBetter: true }),
-      m("نسبة التفاعل", "Engagement rate", 1.1, 7.4, { suffix: "%", decimals: 1 }),
-    ],
+    "idea": {
+      "title": {
+        "ar": "الفكرة",
+        "en": "The idea"
+      },
+      "body": {
+        "ar": "نشتغل على ثلاث منصات سوا: فيسبوك للوصول الواسع، إنستغرام للجمهور الأساسي، وقناة تيك توك جديدة توصل للجمهور الأصغر.",
+        "en": "Three platforms working together: Facebook for wide reach, Instagram for the core audience, and a brand-new TikTok channel for a younger crowd."
+      },
+      "image": ""
+    },
+    "execution": {
+      "title": {
+        "ar": "التنفيذ",
+        "en": "The execution"
+      },
+      "body": {
+        "ar": "٢١٠ منشور بشهر: ٩٩ على فيسبوك، ١٠٤ على إنستغرام، و٧ فيديوهات تيك توك. وصلنا لأكثر من ٧ مليون ظهور، أغلبها من حملات فيسبوك الممولة.",
+        "en": "210 posts in a month: 99 on Facebook, 104 on Instagram and 7 TikTok videos — over 7 million impressions, most of them from paid Facebook campaigns."
+      },
+      "image": ""
+    },
+    "result": {
+      "title": {
+        "ar": "النتيجة",
+        "en": "The result"
+      },
+      "body": {
+        "ar": "المتابعين صاروا ٨٬٨٤٩ بكل المنصات، وتيك توك انطلق من صفر إلى ٢٬١٠٠ متابع بخمس أيام بس.",
+        "en": "Followers reached 8,849 across platforms, and TikTok went from zero to 2,100 followers in just five days."
+      },
+      "image": ""
+    },
+    "metrics": [
+      {
+        "label": {
+          "ar": "كل المتابعين",
+          "en": "Total followers"
+        },
+        "before": 3500,
+        "after": 8849,
+        "prefix": "",
+        "suffix": "",
+        "decimals": 0,
+        "lowerIsBetter": false
+      },
+      {
+        "label": {
+          "ar": "متابعين إنستغرام",
+          "en": "Instagram followers"
+        },
+        "before": 3300,
+        "after": 5871,
+        "prefix": "",
+        "suffix": "",
+        "decimals": 0,
+        "lowerIsBetter": false
+      },
+      {
+        "label": {
+          "ar": "متابعين فيسبوك",
+          "en": "Facebook followers"
+        },
+        "before": 310,
+        "after": 878,
+        "prefix": "",
+        "suffix": "",
+        "decimals": 0,
+        "lowerIsBetter": false
+      },
+      {
+        "label": {
+          "ar": "ظهور تيك توك",
+          "en": "TikTok impressions"
+        },
+        "before": 2831,
+        "after": 87197,
+        "prefix": "",
+        "suffix": "",
+        "decimals": 0,
+        "lowerIsBetter": false
+      }
+    ]
   },
   {
-    id: "noor",
-    client: "Noor Dental",
-    logo: "/mock/logos/noor.svg",
-    industry: { ar: "عيادات أسنان", en: "Dental clinics" },
-    color: "cyan",
-    duration: { ar: "٦ أشهر", en: "6 months" },
-    headline: { ar: "ابتسامات محجوزة لشهرين قدّام", en: "Smiles booked two months ahead" },
-    cover: img("noor", "cover"),
-    challenge: {
-      title: { ar: "التحدي", en: "The challenge" },
-      body: {
-        ar: "منافسة عالية، إعلانات مكلفة، وأغلب الرسائل تسأل عن السعر وتختفي بدون حجز.",
-        en: "Heavy competition, expensive ads, and most inquiries asked about price then vanished without booking.",
-      },
-      image: img("noor", "challenge"),
+    "id": "og-burger",
+    "client": "OG Burger",
+    "logo": "/clients/og-burger.png",
+    "industry": {
+      "ar": "مطعم برگر",
+      "en": "Burger restaurant"
     },
-    idea: {
-      title: { ar: "الفكرة", en: "The idea" },
-      body: {
-        ar: "بدل ما نبيع السعر، بعنا الثقة: سلسلة \"قبل وبعد\" حقيقية مع قصص المراجعين وطبيب يجاوب أسئلة الناس لايف كل أسبوع.",
-        en: "Instead of selling price, we sold trust: real before/after stories and a weekly live Q&A with the doctor.",
-      },
-      image: img("noor", "idea"),
+    "color": "cyan",
+    "duration": {
+      "ar": "",
+      "en": ""
     },
-    execution: {
-      title: { ar: "التنفيذ", en: "The execution" },
-      body: {
-        ar: "صفحة حجز سريعة، رد آلي ذكي على الرسائل، فريق متابعة داخل العيادة، وحملات إعادة استهداف لكل شخص سأل ولم يحجز.",
-        en: "A fast booking page, smart auto-replies, an in-clinic follow-up team, and retargeting for everyone who asked but didn't book.",
-      },
-      image: img("noor", "execution"),
+    "headline": {
+      "ar": "هوية برگر كاملة، من الشعار لحد علبة التوصيل",
+      "en": "A complete burger identity, from logo to delivery box"
     },
-    result: {
-      title: { ar: "النتيجة", en: "The result" },
-      body: {
-        ar: "الجدول ممتلئ لشهرين، والعيادة فتحت فرع ثاني.",
-        en: "The schedule is full for two months and the clinic opened a second branch.",
+    "cover": "/work/brand/og-enjoy.jpg",
+    "challenge": {
+      "title": {
+        "ar": "التحدي",
+        "en": "The challenge"
       },
-      image: img("noor", "result"),
+      "body": {
+        "ar": "OG Burger احتاج هوية تنقرأ بالعربي والإنكليزي سوا، وتبقى واضحة على كل قطعة توصل لإيد الزبون.",
+        "en": "OG Burger needed an identity that reads in Arabic and English at once, and stays clear on everything that reaches the customer's hands."
+      },
+      "image": "/work/brand/og-bowl.jpg"
     },
-    metrics: [
-      m("الحجوزات الشهرية", "Monthly bookings", 60, 410),
-      m("تكلفة الحجز", "Cost per booking", 12, 2.8, { prefix: "$", decimals: 1, lowerIsBetter: true }),
-      m("تقييمات جوجل", "Google reviews", 35, 640),
-      m("نسبة التحويل", "Conversion rate", 3, 21, { suffix: "%" }),
-    ],
+    "idea": {
+      "title": {
+        "ar": "الفكرة",
+        "en": "The idea"
+      },
+      "body": {
+        "ar": "طابع حديث بلمسة فنتج: شعار OG دائري ويّا كتابة «أوجي برجر»، أزرق وأحمر، ونقشة المربعات الكلاسيكية.",
+        "en": "Modern with a vintage twist: a round OG mark paired with «أوجي برجر», blue and red, and the classic checkered pattern."
+      },
+      "image": "/work/brand/og-stickers.jpg"
+    },
+    "execution": {
+      "title": {
+        "ar": "التنفيذ",
+        "en": "The execution"
+      },
+      "body": {
+        "ar": "ستيكرات، منيو، علب برگر، أكياس ورق، علب كرافت وتغليف البطاطا — كلها بنفس اللغة البصرية.",
+        "en": "Stickers, menu, burger boxes, paper bags, kraft bowls and fries packaging — all speaking the same visual language."
+      },
+      "image": "/work/brand/og-box.jpg"
+    },
+    "result": {
+      "title": {
+        "ar": "النتيجة",
+        "en": "The result"
+      },
+      "body": {
+        "ar": "دليل هوية ومطبوعات جاهزة للطباعة، فكل طلب يوصل وهو يحچي باسم OG.",
+        "en": "A print-ready brand guide and printables, so every order arrives speaking OG."
+      },
+      "image": "/work/brand/og-bag.jpg"
+    },
+    "metrics": []
   },
   {
-    id: "sama",
-    client: "Sama Homes",
-    logo: "/mock/logos/sama.svg",
-    industry: { ar: "تطوير عقاري", en: "Real estate" },
-    color: "lilac",
-    duration: { ar: "١٠ أشهر", en: "10 months" },
-    headline: { ar: "مشروع سكني بيع قبل ما يكمل", en: "A residential project sold out before completion" },
-    cover: img("sama", "cover"),
-    challenge: {
-      title: { ar: "التحدي", en: "The challenge" },
-      body: {
-        ar: "مشروع سكني جديد بمنطقة ناشئة، والناس ما تثق بالبيع على الخارطة.",
-        en: "A new residential project in an emerging area, and buyers didn't trust off-plan sales.",
-      },
-      image: img("sama", "challenge"),
+    "id": "viking-burger",
+    "client": "Viking Burger",
+    "logo": "/clients/viking-burger.png",
+    "industry": {
+      "ar": "مطعم برگر",
+      "en": "Burger restaurant"
     },
-    idea: {
-      title: { ar: "الفكرة", en: "The idea" },
-      body: {
-        ar: "\"شوف بيتك يكبر\": بث أسبوعي لمراحل البناء، جولات ثلاثية الأبعاد، وعائلات حقيقية تحچي ليش اختارت سما.",
-        en: "\"Watch your home grow\": weekly construction updates, 3D tours, and real families sharing why they chose Sama.",
-      },
-      image: img("sama", "idea"),
+    "color": "yellow",
+    "duration": {
+      "ar": "",
+      "en": ""
     },
-    execution: {
-      title: { ar: "التنفيذ", en: "The execution" },
-      body: {
-        ar: "حملات ليدز مؤهلة، داشبورد مبيعات مباشر، فعاليات مفتوحة بالموقع، وفريق ماجك يشتغل يومياً ويا فريق المبيعات.",
-        en: "Qualified lead campaigns, a live sales dashboard, on-site open days, and the Magic team working daily with sales.",
-      },
-      image: img("sama", "execution"),
+    "headline": {
+      "ar": "واجهة، منيو، وإطلاق آيس كريم",
+      "en": "Storefront, menu and an ice cream launch"
     },
-    result: {
-      title: { ar: "النتيجة", en: "The result" },
-      body: {
-        ar: "٣٧ وحدة انباعت قبل التسليم وقائمة انتظار للمرحلة الثانية.",
-        en: "37 units sold before handover, with a waiting list for phase two.",
+    "cover": "/work/brand/viking-1.jpg",
+    "challenge": {
+      "title": {
+        "ar": "التحدي",
+        "en": "The challenge"
       },
-      image: img("sama", "result"),
+      "body": {
+        "ar": "Viking Burger احتاج حضور بصري واحد يجمع الفرع والمنيو والسوشيال ميديا.",
+        "en": "Viking Burger needed one visual presence tying together the branch, the menu and social media."
+      },
+      "image": "/work/brand/viking-1.jpg"
     },
-    metrics: [
-      m("العملاء المحتملين", "Qualified leads", 90, 1450),
-      m("الوحدات المباعة", "Units sold", 4, 37),
-      m("العائد على الإعلان", "ROAS", 1.2, 6.8, { suffix: "x", decimals: 1 }),
-      m("زيارات الموقع", "Site visits", 300, 5200),
-    ],
+    "idea": {
+      "title": {
+        "ar": "الفكرة",
+        "en": "The idea"
+      },
+      "body": {
+        "ar": "لغة جريئة: صور أكل قريبة، خط عربي عريض، ورسائل قصيرة مثل «مودك اليوم لحم؟»",
+        "en": "A bold language: close-up food shots, heavy Arabic type and short hooks like «مودك اليوم لحم؟» (In a beef mood today?)"
+      },
+      "image": "/work/brand/viking-2.jpg"
+    },
+    "execution": {
+      "title": {
+        "ar": "التنفيذ",
+        "en": "The execution"
+      },
+      "body": {
+        "ar": "صممنا واجهة الفرع، منيو كامل بـ ١٤ صفحة، وتصاميم سوشيال للبرگر والدجاج.",
+        "en": "We designed the storefront, a full 14-page menu, and social posts for the burgers and chicken."
+      },
+      "image": "/work/brand/viking-6.jpg"
+    },
+    "result": {
+      "title": {
+        "ar": "النتيجة",
+        "en": "The result"
+      },
+      "body": {
+        "ar": "وأطلقنا خط الآيس كريم بإعلان «نكهات جديدة بالطريق» ومنيو خاص للنكهات.",
+        "en": "Then we launched the ice cream line with a «new flavours on the way» teaser and its own flavour menu."
+      },
+      "image": "/work/brand/viking-11.jpg"
+    },
+    "metrics": []
   },
   {
-    id: "bab",
-    client: "Bab Burger",
-    logo: "/mock/logos/bab.svg",
-    industry: { ar: "مطاعم", en: "Restaurants" },
-    color: "green",
-    duration: { ar: "٤ أشهر", en: "4 months" },
-    headline: { ar: "برگر صار حديث السوشيال", en: "A burger the whole feed talked about" },
-    cover: img("bab", "cover"),
-    challenge: {
-      title: { ar: "التحدي", en: "The challenge" },
-      body: {
-        ar: "سوق مزدحم بالمطاعم، ومنيو حلو بس ما عنده شخصية تميزه.",
-        en: "A crowded restaurant market and a good menu with no personality.",
-      },
-      image: img("bab", "challenge"),
+    "id": "nara",
+    "client": "Nara by Naranj",
+    "logo": "/clients/nara.png",
+    "industry": {
+      "ar": "مطعم",
+      "en": "Restaurant"
     },
-    idea: {
-      title: { ar: "الفكرة", en: "The idea" },
-      body: {
-        ar: "شخصية جريئة ومضحكة للعلامة + تحدي \"باب البرگر الكبير\" اللي خلّى الناس تجي تصوّر.",
-        en: "A bold, funny brand voice plus the \"Big Bab challenge\" that made people come to film.",
-      },
-      image: img("bab", "idea"),
+    "color": "orchid",
+    "duration": {
+      "ar": "",
+      "en": ""
     },
-    execution: {
-      title: { ar: "التنفيذ", en: "The execution" },
-      body: {
-        ar: "محتوى يومي، تعاون مع ٢٠ مؤثر أكل، حملات توصيل مستهدفة بأوقات الجوع، وعروض حصرية لتطبيق التوصيل.",
-        en: "Daily content, 20 food creators, delivery campaigns timed to hunger hours, and exclusive app deals.",
-      },
-      image: img("bab", "execution"),
+    "headline": {
+      "ar": "دليل هوية نارة، من اللافتة لحد زي الموظفين",
+      "en": "Nara's look book, from the sign to the staff uniform"
     },
-    result: {
-      title: { ar: "النتيجة", en: "The result" },
-      body: {
-        ar: "الطلبات تضاعفت ٥ مرات والتحدي وصل لأكثر من مليوني مشاهدة.",
-        en: "Orders grew 5x and the challenge passed two million views.",
+    "cover": "/work/brand/nara-sign.jpg",
+    "challenge": {
+      "title": {
+        "ar": "التحدي",
+        "en": "The challenge"
       },
-      image: img("bab", "result"),
+      "body": {
+        "ar": "نارة، مطعم من نارنج، احتاج هوية تعيش بالمكان نفسه، مو بس على السوشيال.",
+        "en": "Nara, a restaurant by Naranj, needed an identity that lives in the place itself, not only on social media."
+      },
+      "image": "/work/brand/naranj-cover.jpg"
     },
-    metrics: [
-      m("الطلبات اليومية", "Daily orders", 80, 420),
-      m("المشاهدات", "Views", 15000, 2100000),
-      m("تقييم التطبيق", "App rating", 3.6, 4.8, { decimals: 1 }),
-      m("تكلفة الطلب", "Cost per order", 3.2, 0.7, { prefix: "$", decimals: 1, lowerIsBetter: true }),
-    ],
+    "idea": {
+      "title": {
+        "ar": "الفكرة",
+        "en": "The idea"
+      },
+      "body": {
+        "ar": "شعار «نارة» بخط عربي حر، عناصر كوميك مثل فقاعة «صحة وهنا»، وأيقونات للأكل والمطبخ.",
+        "en": "A free-hand Arabic «نارة» logo, comic elements like the «صحة وهنا» speech bubble, and food and kitchen icons."
+      },
+      "image": "/work/brand/nara-icons.jpg"
+    },
+    "execution": {
+      "title": {
+        "ar": "التنفيذ",
+        "en": "The execution"
+      },
+      "body": {
+        "ar": "دليل كامل: الشعار والألوان، الخطوط، لافتة المطعم، أدوات الصالة والتوصيل، وزي الموظفين للصالة والتوصيل والباريستا، ويّا الشماغ الشامي.",
+        "en": "A full look book: logo and colours, typography, the restaurant sign, dine-in and delivery items, and uniforms for floor, delivery and barista staff — with the Damascene scarf."
+      },
+      "image": "/work/brand/nara-uniform.jpg"
+    },
+    "result": {
+      "title": {
+        "ar": "النتيجة",
+        "en": "The result"
+      },
+      "body": {
+        "ar": "هوية وحدة تمشي من باب المطعم لحد كيس التوصيل، وصممنا منيو نارنج كمان.",
+        "en": "One identity running from the front door to the delivery bag — and we designed the Naranj menu too."
+      },
+      "image": "/work/brand/naranj-menu.jpg"
+    },
+    "metrics": []
   },
+  {
+    "id": "bo-ali",
+    "client": "Frooj Bo Ali",
+    "logo": "/clients/frooj-bo-ali.png",
+    "industry": {
+      "ar": "مطعم فروج",
+      "en": "Chicken restaurant"
+    },
+    "color": "yellow",
+    "duration": {
+      "ar": "٣ مراحل",
+      "en": "3 phases"
+    },
+    "headline": {
+      "ar": "حملة وعي لفرع النسيم على ٤ منصات",
+      "en": "An awareness push for the Al-Naseem branch on 4 platforms"
+    },
+    "cover": "/work/cases/bo-ali.jpg",
+    "challenge": {
+      "title": {
+        "ar": "التحدي",
+        "en": "The challenge"
+      },
+      "body": {
+        "ar": "فروج بو علي عنده ٣ فروع ببغداد: الكاظمية، حي العامل، والنسيم. الهدف نوصّل فرع النسيم لأكبر عدد من الناس.",
+        "en": "Frooj Bo Ali has 3 branches in Baghdad — Kadhimiya, Hay Al-Amil and Al-Naseem. The goal: put the Al-Naseem branch in front of as many people as possible."
+      },
+      "image": ""
+    },
+    "idea": {
+      "title": {
+        "ar": "الفكرة",
+        "en": "The idea"
+      },
+      "body": {
+        "ar": "حملة وعي بثلاث مراحل على فيسبوك وإنستغرام وتيك توك وسناب شات، تركّز على الوصول والتفاعل.",
+        "en": "A three-phase awareness campaign on Facebook, Instagram, TikTok and Snapchat, built for reach and engagement."
+      },
+      "image": ""
+    },
+    "execution": {
+      "title": {
+        "ar": "التنفيذ",
+        "en": "The execution"
+      },
+      "body": {
+        "ar": "١٠ ريلز ترند، ٤ ريلز ويا مؤثرين، ١٦ صورة وتصميم، وستوب موشن — مع ميزانية إعلانية ٢٬٦٠٠$ موزعة على المراحل.",
+        "en": "10 trend reels, 4 influencer reels, 16 photos and designs, and stop-motion — with a $2,600 ad budget split across the phases."
+      },
+      "image": ""
+    },
+    "result": {
+      "title": {
+        "ar": "الأهداف",
+        "en": "The targets"
+      },
+      "body": {
+        "ar": "الهدف: ٢–٣ مليون وصول على فيسبوك، ٢ مليون على إنستغرام، و٣ مليون على تيك توك، ويّا ١٠–١٥ ألف متابع بكل منصة.",
+        "en": "The targets: 2–3M reach on Facebook, 2M on Instagram and 3M on TikTok, with 10–15K followers on each platform."
+      },
+      "image": ""
+    },
+    "metrics": []
+  },
+  {
+    "id": "vita-home",
+    "client": "Vita Home",
+    "logo": "/clients/vita-home.png",
+    "industry": {
+      "ar": "أثاث",
+      "en": "Furniture"
+    },
+    "color": "lilac",
+    "duration": {
+      "ar": "٣ أشهر",
+      "en": "3 months"
+    },
+    "headline": {
+      "ar": "حملة وعي لمعرض أثاث بفرعين",
+      "en": "An awareness campaign for a two-branch furniture store"
+    },
+    "cover": "/work/cases/vita-home.jpg",
+    "challenge": {
+      "title": {
+        "ar": "التحدي",
+        "en": "The challenge"
+      },
+      "body": {
+        "ar": "معرض أثاث بفرعين يقدّم غرف نوم بأسعار مناسبة، ويحتاج جمهور يعرفه قبل ما يزوره.",
+        "en": "A two-branch furniture store selling bedrooms at fair prices, needing an audience that knows it before they visit."
+      },
+      "image": ""
+    },
+    "idea": {
+      "title": {
+        "ar": "الفكرة",
+        "en": "The idea"
+      },
+      "body": {
+        "ar": "حملة بثلاث مراحل، شهر لكل مرحلة، على إنستغرام وفيسبوك: وعي بالعلامة، وصول، وبناء جمهور من الزبائن المحتملين.",
+        "en": "Three one-month phases on Instagram and Facebook: brand awareness, reach, and building an audience of potential buyers."
+      },
+      "image": ""
+    },
+    "execution": {
+      "title": {
+        "ar": "التنفيذ",
+        "en": "The execution"
+      },
+      "body": {
+        "ar": "٢٥ منشور: ٤ ريلز، ٦ تصاميم، ٥ فيديوهات و١٠ صور للغرف، مع ميزانية إعلانية ٣٬٧٠٠$ (٢٬٨٠٠$ إنستغرام و٩٠٠$ فيسبوك).",
+        "en": "25 posts: 4 reels, 6 designs, 5 room videos and 10 room photos, with a $3,700 ad budget ($2,800 Instagram, $900 Facebook)."
+      },
+      "image": ""
+    },
+    "result": {
+      "title": {
+        "ar": "الأهداف",
+        "en": "The targets"
+      },
+      "body": {
+        "ar": "الهدف: ٥٠٠ ألف إلى ٣ مليون وصول على إنستغرام، ٥٠٠ ألف إلى ٢ مليون على فيسبوك، وآلاف المتابعين الجدد على المنصتين.",
+        "en": "The targets: 500K–3M reach on Instagram, 500K–2M on Facebook, and thousands of new followers on both."
+      },
+      "image": ""
+    },
+    "metrics": []
+  }
 ];
 
 export const seed: Content = {
@@ -222,10 +445,10 @@ export const seed: Content = {
       en: "A creative marketing agency: strategy, campaign management, content and branding.",
     },
     email: "hello@magicteam.co",
-    phone: "+964 770 000 0000",
-    whatsapp: "9647700000000",
-    address: { ar: "بغداد، العراق", en: "Baghdad, Iraq" },
-    instagram: "https://instagram.com/",
+    phone: "+964 780 023 0320",
+    whatsapp: "9647800230320",
+    address: { ar: "بغداد - القادسية", en: "Al Qadisiya, Baghdad" },
+    instagram: "https://instagram.com/magicteam.1",
     tiktok: "https://tiktok.com/",
     linkedin: "https://linkedin.com/",
     notice: { ar: "نسخة تصميم أولية · المحتوى والأرقام تجريبية", en: "Design preview · content and numbers are sample data" },
@@ -234,6 +457,7 @@ export const seed: Content = {
       { key: "clients", visible: true },
       { key: "featured", visible: true },
       { key: "team", visible: true },
+      { key: "gallery", visible: true },
       { key: "cases", visible: true },
       { key: "beforeAfter", visible: true },
       { key: "manifesto", visible: true },
@@ -255,29 +479,532 @@ export const seed: Content = {
       { label: { ar: "MARKETING", en: "MARKETING" }, color: "lilac" },
     ],
     cards: [
-      { image: "/brand/posts/post-1.jpg", alt: "Your ad was generated using AI?" },
-      { image: "/brand/posts/post-2.jpg", alt: "Your audience is scrolling" },
-      { image: "/brand/posts/post-3.jpg", alt: "Make ordinary disappear" },
+      {
+        "image": "/work/photo/shoot-09.jpg",
+        "alt": "Magic Team food shoot — burger and fries"
+      },
+      {
+        "image": "/work/photo/shoot-02.jpg",
+        "alt": "Magic Team food shoot — sandwich close-up"
+      },
+      {
+        "image": "/work/photo/shoot-11.jpg",
+        "alt": "Magic Team food shoot — ice cream"
+      }
     ],
+  },
+  gallery: {
+    "eyebrow": {
+      "ar": "من شغلنا",
+      "en": "Our work"
+    },
+    "title": {
+      "ar": "شغل حقيقي، لعلامات حقيقية",
+      "en": "Real work for real brands"
+    },
+    "subtitle": {
+      "ar": "كل مشروع بصفحته — افتح أي واحد وشوف الشغل اللي سوّيناه.",
+      "en": "Every project has its own page — open one to see the work we made."
+    },
+    "more": {
+      "ar": "المشروع التالي",
+      "en": "Next project"
+    },
+    "projects": [
+      {
+        "slug": "og-burger",
+        "client": "OG Burger",
+        "logo": "/clients/og-burger.png",
+        "color": "cyan",
+        "title": {
+          "ar": "هوية برگر كاملة",
+          "en": "A complete burger identity"
+        },
+        "summary": {
+          "ar": "من الشعار لحد علبة التوصيل: علب، أكياس، ستيكرات وكل قطعة توصل لإيد الزبون.",
+          "en": "From the logo to the delivery box: boxes, bags, stickers and everything that reaches the customer's hands."
+        },
+        "cover": "/work/brand/og-enjoy.jpg",
+        "items": [
+          {
+            "title": {
+              "ar": "هوية بصرية كاملة",
+              "en": "Full brand identity"
+            },
+            "category": "branding",
+            "image": "/work/brand/og-enjoy.jpg"
+          },
+          {
+            "title": {
+              "ar": "علب البرگر",
+              "en": "Burger box packaging"
+            },
+            "category": "branding",
+            "image": "/work/brand/og-box.jpg"
+          },
+          {
+            "title": {
+              "ar": "ستيكرات وعناصر",
+              "en": "Stickers & brand elements"
+            },
+            "category": "branding",
+            "image": "/work/brand/og-stickers.jpg"
+          },
+          {
+            "title": {
+              "ar": "أكياس التوصيل",
+              "en": "Paper bag"
+            },
+            "category": "branding",
+            "image": "/work/brand/og-bag.jpg"
+          },
+          {
+            "title": {
+              "ar": "علب الكرافت",
+              "en": "Kraft bowl"
+            },
+            "category": "branding",
+            "image": "/work/brand/og-bowl.jpg"
+          },
+          {
+            "title": {
+              "ar": "تغليف البطاطا",
+              "en": "Fries packaging"
+            },
+            "category": "branding",
+            "image": "/work/brand/og-fries.jpg"
+          }
+        ]
+      },
+      {
+        "slug": "nara",
+        "client": "Nara by Naranj",
+        "logo": "/clients/nara.png",
+        "color": "orchid",
+        "title": {
+          "ar": "هوية نارا ومنيو نارنج",
+          "en": "Nara's identity & the Naranj menu"
+        },
+        "summary": {
+          "ar": "اللافتة، الأيقونات، يونيفورم الستاف، وتصميم المنيو — هوية وحدة تمشي بكل المكان.",
+          "en": "The sign, icons, staff uniform and menu design — one identity across the whole place."
+        },
+        "cover": "/work/brand/nara-sign.jpg",
+        "items": [
+          {
+            "title": {
+              "ar": "لافتة المطعم",
+              "en": "Restaurant sign"
+            },
+            "category": "branding",
+            "image": "/work/brand/nara-sign.jpg"
+          },
+          {
+            "title": {
+              "ar": "تصميم المنيو",
+              "en": "Menu design"
+            },
+            "category": "design",
+            "image": "/work/brand/naranj-cover.jpg"
+          },
+          {
+            "title": {
+              "ar": "زي الموظفين",
+              "en": "Staff uniforms"
+            },
+            "category": "branding",
+            "image": "/work/brand/nara-uniform.jpg"
+          },
+          {
+            "title": {
+              "ar": "أيقونات الهوية",
+              "en": "Iconography"
+            },
+            "category": "branding",
+            "image": "/work/brand/nara-icons.jpg"
+          },
+          {
+            "title": {
+              "ar": "صفحات المنيو",
+              "en": "Menu pages"
+            },
+            "category": "design",
+            "image": "/work/brand/naranj-menu.jpg"
+          }
+        ]
+      },
+      {
+        "slug": "viking-burger",
+        "client": "Viking Burger",
+        "logo": "/clients/viking-burger.png",
+        "color": "yellow",
+        "title": {
+          "ar": "تصاميم سوشيال وواجهة الفرع",
+          "en": "Social design & storefront"
+        },
+        "summary": {
+          "ar": "محتوى سوشيال جريء وواجهة فرع تحچي بنفس لغة فايكنگ.",
+          "en": "Bold social content and a storefront that speaks Viking's language."
+        },
+        "cover": "/work/brand/viking-1.jpg",
+        "items": [
+          {
+            "title": {
+              "ar": "تصميم واجهة الفرع",
+              "en": "Storefront visual"
+            },
+            "category": "design",
+            "image": "/work/brand/viking-1.jpg"
+          },
+          {
+            "title": {
+              "ar": "تصميم سوشيال ميديا",
+              "en": "Social media design"
+            },
+            "category": "design",
+            "image": "/work/brand/viking-2.jpg"
+          },
+          {
+            "title": {
+              "ar": "إعلان الآيس كريم",
+              "en": "Ice cream launch post"
+            },
+            "category": "design",
+            "image": "/work/brand/viking-11.jpg"
+          },
+          {
+            "title": {
+              "ar": "تصميم سوشيال ميديا",
+              "en": "Social media design"
+            },
+            "category": "design",
+            "image": "/work/brand/viking-6.jpg"
+          },
+          {
+            "title": {
+              "ar": "منيو الآيس كريم",
+              "en": "Ice cream menu"
+            },
+            "category": "design",
+            "image": "/work/brand/viking-12.jpg"
+          }
+        ]
+      },
+      {
+        "slug": "chicken-rays",
+        "client": "Chicken Ray's",
+        "logo": "/clients/chicken-rays.png",
+        "color": "green",
+        "title": {
+          "ar": "ريل ناشفيل هوت تشكن",
+          "en": "Nashville Hot Chicken reel"
+        },
+        "summary": {
+          "ar": "تصوير ومونتاج ريل يخلي الواحد يجوع من أول ثانية.",
+          "en": "A shot-and-cut reel that makes you hungry from the first second."
+        },
+        "cover": "/work/reel-poster.jpg",
+        "items": [
+          {
+            "title": {
+              "ar": "ريل ناشفيل هوت تشكن",
+              "en": "Nashville Hot Chicken reel"
+            },
+            "category": "video",
+            "image": "/work/reel-poster.jpg",
+            "video": "/work/reel.mp4"
+          }
+        ]
+      },
+      {
+        "slug": "hamish-roastery",
+        "client": "Hamish Roastery",
+        "logo": "/clients/hamish-roastery.png",
+        "color": "lilac",
+        "title": {
+          "ar": "شعار وهوية محمصة",
+          "en": "Roastery logo & identity"
+        },
+        "summary": {
+          "ar": "شعار وهوية بلونين لمحمصة حامش.",
+          "en": "A two-colour logo and identity for Hamish Roastery."
+        },
+        "cover": "/work/brand/hamish-red.jpg",
+        "items": [
+          {
+            "title": {
+              "ar": "شعار وهوية",
+              "en": "Logo & identity"
+            },
+            "category": "branding",
+            "image": "/work/brand/hamish-red.jpg"
+          },
+          {
+            "title": {
+              "ar": "ألوان الهوية",
+              "en": "Identity colourways"
+            },
+            "category": "branding",
+            "image": "/work/brand/hamish-green.jpg"
+          }
+        ]
+      },
+      {
+        "slug": "west-burger",
+        "client": "West Burger",
+        "logo": "/clients/west-burger.png",
+        "color": "cyan",
+        "title": {
+          "ar": "شعار وهوية برگر",
+          "en": "Burger logo & identity"
+        },
+        "summary": {
+          "ar": "هوية بصرية لـ West Burger.",
+          "en": "A visual identity for West Burger."
+        },
+        "cover": "/work/brand/west-burger.jpg",
+        "items": [
+          {
+            "title": {
+              "ar": "شعار",
+              "en": "Logo design"
+            },
+            "category": "branding",
+            "image": "/work/brand/west-burger.jpg"
+          }
+        ]
+      },
+      {
+        "slug": "photo-shoots",
+        "client": "",
+        "logo": "",
+        "color": "yellow",
+        "title": {
+          "ar": "جلسات تصوير منتجات",
+          "en": "Product photo shoots"
+        },
+        "summary": {
+          "ar": "تصوير أكل ومنتجات وموديل بإضاءة وستايل يناسب كل علامة.",
+          "en": "Food, product and model photography, lit and styled for each brand."
+        },
+        "cover": "/work/photo/shoot-09.jpg",
+        "items": [
+          {
+            "title": {
+              "ar": "تصوير منتجات وموديل",
+              "en": "Product & model shoot"
+            },
+            "category": "photo",
+            "image": "/work/photo/shoot-09.jpg"
+          },
+          {
+            "title": {
+              "ar": "تصوير منتجات وموديل",
+              "en": "Product & model shoot"
+            },
+            "category": "photo",
+            "image": "/work/photo/shoot-02.jpg"
+          },
+          {
+            "title": {
+              "ar": "تصوير منتجات وموديل",
+              "en": "Product & model shoot"
+            },
+            "category": "photo",
+            "image": "/work/photo/shoot-11.jpg"
+          },
+          {
+            "title": {
+              "ar": "تصوير منتجات وموديل",
+              "en": "Product & model shoot"
+            },
+            "category": "photo",
+            "image": "/work/photo/shoot-06.jpg"
+          },
+          {
+            "title": {
+              "ar": "تصوير منتجات وموديل",
+              "en": "Product & model shoot"
+            },
+            "category": "photo",
+            "image": "/work/photo/shoot-01.jpg"
+          },
+          {
+            "title": {
+              "ar": "تصوير منتجات وموديل",
+              "en": "Product & model shoot"
+            },
+            "category": "photo",
+            "image": "/work/photo/shoot-10.jpg"
+          },
+          {
+            "title": {
+              "ar": "تصوير منتجات وموديل",
+              "en": "Product & model shoot"
+            },
+            "category": "photo",
+            "image": "/work/photo/shoot-05.jpg"
+          },
+          {
+            "title": {
+              "ar": "تصوير منتجات وموديل",
+              "en": "Product & model shoot"
+            },
+            "category": "photo",
+            "image": "/work/photo/shoot-13.jpg"
+          },
+          {
+            "title": {
+              "ar": "تصوير منتجات وموديل",
+              "en": "Product & model shoot"
+            },
+            "category": "photo",
+            "image": "/work/photo/shoot-08.jpg"
+          },
+          {
+            "title": {
+              "ar": "تصوير منتجات وموديل",
+              "en": "Product & model shoot"
+            },
+            "category": "photo",
+            "image": "/work/photo/shoot-03.jpg"
+          },
+          {
+            "title": {
+              "ar": "تصوير منتجات وموديل",
+              "en": "Product & model shoot"
+            },
+            "category": "photo",
+            "image": "/work/photo/shoot-14.jpg"
+          },
+          {
+            "title": {
+              "ar": "تصوير منتجات وموديل",
+              "en": "Product & model shoot"
+            },
+            "category": "photo",
+            "image": "/work/photo/shoot-12.jpg"
+          },
+          {
+            "title": {
+              "ar": "تصوير منتجات وموديل",
+              "en": "Product & model shoot"
+            },
+            "category": "photo",
+            "image": "/work/photo/shoot-16.jpg"
+          },
+          {
+            "title": {
+              "ar": "تصوير منتجات وموديل",
+              "en": "Product & model shoot"
+            },
+            "category": "photo",
+            "image": "/work/photo/shoot-07.jpg"
+          },
+          {
+            "title": {
+              "ar": "تصوير منتجات وموديل",
+              "en": "Product & model shoot"
+            },
+            "category": "photo",
+            "image": "/work/photo/shoot-15.jpg"
+          },
+          {
+            "title": {
+              "ar": "تصوير منتجات وموديل",
+              "en": "Product & model shoot"
+            },
+            "category": "photo",
+            "image": "/work/photo/shoot-04.jpg"
+          }
+        ]
+      }
+    ]
   },
   clients: {
     eyebrow: { ar: "عملاؤنا", en: "Clients" },
     title: { ar: "علامات وثقت بنا", en: "Brands that trusted us" },
     subtitle: {
-      ar: "من المقاهي للعيادات للعقارات — علامات اختارت تكون مختلفة.",
-      en: "From cafés to clinics to real estate — brands that chose to be different.",
+      ar: "من المطاعم والمقاهي للعيادات والمتاجر — علامات اختارت تكون مختلفة.",
+      en: "From restaurants and cafés to clinics and retail — brands that chose to be different.",
     },
     logos: [
-      { name: "Dijla Roasters", logo: "/mock/logos/dijla.svg" },
-      { name: "Noor Dental", logo: "/mock/logos/noor.svg" },
-      { name: "Sama Homes", logo: "/mock/logos/sama.svg" },
-      { name: "Zaha Atelier", logo: "/mock/logos/zaha.svg" },
-      { name: "Bab Burger", logo: "/mock/logos/bab.svg" },
-      { name: "Nakheel Fitness", logo: "/mock/logos/nakheel.svg" },
-      { name: "Qamar Travel", logo: "/mock/logos/qamar.svg" },
-      { name: "Ward Beauty", logo: "/mock/logos/ward.svg" },
-      { name: "Lumen Optics", logo: "/mock/logos/lumen.svg" },
-      { name: "Tamr Sweets", logo: "/mock/logos/tamr.svg" },
+      {
+        "name": "Viking Burger",
+        "logo": "/clients/viking-burger.png"
+      },
+      {
+        "name": "OG Burger",
+        "logo": "/clients/og-burger.png"
+      },
+      {
+        "name": "The Butter",
+        "logo": "/clients/the-butter.png"
+      },
+      {
+        "name": "Nara by Naranj",
+        "logo": "/clients/nara.png"
+      },
+      {
+        "name": "Hamish Roastery",
+        "logo": "/clients/hamish-roastery.png"
+      },
+      {
+        "name": "Chicken Ray's",
+        "logo": "/clients/chicken-rays.png"
+      },
+      {
+        "name": "West Burger",
+        "logo": "/clients/west-burger.png"
+      },
+      {
+        "name": "Frooj Bo Ali",
+        "logo": "/clients/frooj-bo-ali.png"
+      },
+      {
+        "name": "Soft Creamery",
+        "logo": "/clients/soft-creamery.png"
+      },
+      {
+        "name": "Locus",
+        "logo": "/clients/locus.png"
+      },
+      {
+        "name": "Taj Almazraa",
+        "logo": "/clients/taj-almazraa.png"
+      },
+      {
+        "name": "Better Home",
+        "logo": "/clients/better-home.png"
+      },
+      {
+        "name": "Zaid Shakir",
+        "logo": "/clients/zaid-shakir.png"
+      },
+      {
+        "name": "Tazaa",
+        "logo": "/clients/tazaa.png"
+      },
+      {
+        "name": "Sumer",
+        "logo": "/clients/sumer.png"
+      },
+      {
+        "name": "Nanolink USA",
+        "logo": "/clients/nanolink.png"
+      },
+      {
+        "name": "Sheen",
+        "logo": "/clients/sheen.png"
+      },
+      {
+        "name": "Taj Henna",
+        "logo": "/clients/taj-henna.png"
+      },
+      {
+        "name": "Qatonil",
+        "logo": "/clients/qatonil.png"
+      }
     ],
   },
   featured: {
@@ -717,8 +1444,8 @@ export const seed: Content = {
     eyebrow: { ar: "قصص نجاح", en: "Case stories" },
     title: { ar: "ماذا حققنا", en: "What we achieved" },
     subtitle: {
-      ar: "كل عميل عنده قصة. اضغط على أي قصة وتابعها من التحدي لحد النتيجة.",
-      en: "Every client has a story. Tap one and follow it from challenge to result.",
+      ar: "كل عميل عنده قصة. اضغط على أي قصة وتابعها من البداية لحد النتيجة.",
+      en: "Every client has a story. Tap one and follow it from the brief to the result.",
     },
     items: cases,
   },
@@ -726,8 +1453,8 @@ export const seed: Content = {
     eyebrow: { ar: "الأرقام لا تكذب", en: "Numbers don't lie" },
     title: { ar: "الأرقام قبل ماجك", en: "The numbers before Magic" },
     subtitle: {
-      ar: "اختار العميل، شوف أرقامه قبل ما نشتغل وياه، وبعدين لوّح بالعصا.",
-      en: "Pick a client, see their numbers before we started, then wave the wand.",
+      ar: "شوف الأرقام قبل ما نشتغل، وبعدين لوّح بالعصا السحرية.",
+      en: "See the numbers before we started, then wave the magic wand.",
     },
     beforeLabel: { ar: "قبل ماجك", en: "Before Magic" },
     afterLabel: { ar: "بعد ماجك", en: "After Magic" },
@@ -820,7 +1547,7 @@ export const seed: Content = {
       clientLogo: "",
       note: { ar: "عرض مخصص لمطعم Golden Grill", en: "A tailored deck for Golden Grill" },
       sections: ["hero", "clients", "cases", "beforeAfter", "featured", "services", "contact"],
-      caseIds: ["bab", "dijla"],
+      caseIds: ["og-burger", "viking-burger", "nara", "bo-ali"],
     },
     {
       slug: "clinic-pitch",
@@ -828,7 +1555,7 @@ export const seed: Content = {
       clientLogo: "",
       note: { ar: "عرض مخصص لعيادات الشفاء", en: "A tailored deck for Shifa Clinics" },
       sections: ["hero", "team", "cases", "beforeAfter", "featured", "services", "contact"],
-      caseIds: ["noor"],
+      caseIds: ["geogres", "vita-home"],
     },
   ],
 };

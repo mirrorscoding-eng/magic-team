@@ -61,10 +61,10 @@ export function Presenter({
     () => [
       ...(deck ? [{ id: "cover", label: locale === "ar" ? "الغلاف" : "Cover" }] : []),
       ...keys
-        .filter((k) => !((k === "cases" || k === "beforeAfter") && !items.length))
+        .filter((k) => !(k === "cases" && !items.length) && !(k === "beforeAfter" && !items.some((c) => c.metrics.length)))
         .map((k) => ({ id: k, key: k, label: t(SECTION_LABELS[k], locale) })),
     ],
-    [deck, keys, items.length, locale],
+    [deck, keys, items, locale],
   );
   const [idx, setIdx] = useState(0);
   const [idle, setIdle] = useState(false);
