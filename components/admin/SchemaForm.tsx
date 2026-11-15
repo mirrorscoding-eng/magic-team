@@ -3,10 +3,12 @@ import { useRef, useState } from "react";
 import { Icon } from "@/components/brand/Icon";
 import { BRAND_COLORS, blank, type Field } from "@/lib/schema";
 import type { L } from "@/lib/types";
+import { VIDEO_LABEL, canAmbient, parseVideo, posterOf } from "@/lib/video";
 
 export type Options = {
   sections: { value: string; label: string }[];
   cases: { value: string; label: string }[];
+  projects: { value: string; label: string }[];
 };
 
 type Obj = Record<string, unknown>;
@@ -35,26 +37,46 @@ function LInput({ value, onChange, multiline }: { value: L; onChange: (v: L) => 
   );
 }
 
-function ImageInput({ value, onChange }: { value: string; onChange: (v: string) => void }) {
-  const [busy, setBusy] = useState(false);
+/** Streams the raw file to /api/upload (no multipart) so large videos work, with progress. */
+function uploadFile(f: File, onProgress: (pct: number) => void): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/api/upload");
+    xhr.setRequestHeader("Content-Type", f.type || "application/octet-stream");
+    xhr.upload.onprogress = (e) => e.lengthComputable && onProgress(Math.round((e.loaded / e.total) * 100));
+    xhr.onload = () => {
+      let j: { url?: string; error?: string } = {};
+      try {
+        j = JSON.parse(xhr.responseText);
+      } catch {}
+      if (xhr.status >= 200 && xhr.status < 300 && j.url) resolve(j.url);
+      else reject(new Error(j.error || "فشل الرفع"));
+    };
+    xhr.onerror = () => reject(new Error("انقطع الاتصال أثناء الرفع"));
+    xhr.send(f);
+  });
+}
+
+function useUpload(onChange: (v: string) => void) {
+  const [pct, setPct] = useState<number | null>(null);
   const [err, setErr] = useState("");
-  const file = useRef<HTMLInputElement>(null);
   const upload = async (f: File) => {
-    setBusy(true);
+    setPct(0);
     setErr("");
-    const fd = new FormData();
-    fd.append("file", f);
     try {
-      const r = await fetch("/api/upload", { method: "POST", body: fd });
-      const j = await r.json();
-      if (!r.ok) throw new Error(j.error || "فشل الرفع");
-      onChange(j.url);
+      onChange(await uploadFile(f, setPct));
     } catch (e) {
       setErr((e as Error).message);
     } finally {
-      setBusy(false);
+      setPct(null);
     }
   };
+  return { busy: pct !== null, pct, err, upload };
+}
+
+function ImageInput({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const { busy, err, upload } = useUpload(onChange);
+  const file = useRef<HTMLInputElement>(null);
   return (
     <div
       className="flex items-center gap-3 rounded-xl border border-dashed border-[var(--line)] bg-ink/40 p-2.5"
@@ -83,6 +105,65 @@ function ImageInput({ value, onChange }: { value: string; onChange: (v: string) 
           {err && <span className="text-xs text-orchid">{err}</span>}
         </div>
         <input ref={file} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])} />
+      </div>
+    </div>
+  );
+}
+
+/** A video is either an uploaded file or a pasted YouTube / Vimeo / TikTok / Instagram link. */
+function VideoInput({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const { busy, pct, err, upload } = useUpload(onChange);
+  const file = useRef<HTMLInputElement>(null);
+  const v = parseVideo(value);
+  const thumb = posterOf(value, "");
+  return (
+    <div
+      className="flex items-center gap-3 rounded-xl border border-dashed border-[var(--line)] bg-ink/40 p-2.5"
+      onDragOver={(e) => e.preventDefault()}
+      onDrop={(e) => {
+        e.preventDefault();
+        const f = e.dataTransfer.files[0];
+        if (f) upload(f);
+      }}
+    >
+      <div className="relative grid h-16 w-24 shrink-0 place-items-center overflow-hidden rounded-lg bg-ink-2">
+        {v?.kind === "file" ? (
+          <video src={v.src} muted playsInline preload="metadata" className="h-full w-full object-cover" />
+        ) : thumb ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={thumb} alt="" className="h-full w-full object-cover" />
+        ) : (
+          <Icon name="present" className="h-6 w-6 text-lilac/30" />
+        )}
+        {v && <span className="absolute bottom-1 start-1 rounded bg-ink/80 px-1.5 py-0.5 font-latin text-[9px] font-bold text-green">{VIDEO_LABEL[v.kind]}</span>}
+      </div>
+      <div className="min-w-0 flex-1 space-y-2">
+        <input
+          className={`${inputCls} py-2! font-latin text-xs!`}
+          value={value ?? ""}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="https://youtube.com/watch?v=…  أو  tiktok / instagram / vimeo  أو ارفع ملف"
+          dir="ltr"
+        />
+        <div className="flex flex-wrap items-center gap-2">
+          <button type="button" onClick={() => file.current?.click()} disabled={busy} className="rounded-lg bg-white/10 px-3 py-1.5 text-xs font-semibold hover:bg-white/15 disabled:opacity-50">
+            {busy ? `جاري الرفع ${pct ?? 0}%` : "رفع فيديو (mp4 / mov / webm)"}
+          </button>
+          {value && (
+            <button type="button" onClick={() => onChange("")} className="rounded-lg px-2 py-1.5 text-xs text-lilac/60 hover:text-orchid">
+              إزالة
+            </button>
+          )}
+          {value && !v && <span className="text-xs text-yellow">الرابط مو مدعوم — استخدم يوتيوب، فيميو، تيك توك، انستغرام، أو ملف فيديو</span>}
+          {v && v.kind !== "file" && !canAmbient(v) && <span className="text-xs text-lilac/50">{VIDEO_LABEL[v.kind]} ما يشتغل تلقائياً: تطلع صورة الغلاف وينفتح بالضغط</span>}
+          {err && <span className="text-xs text-orchid">{err}</span>}
+        </div>
+        {busy && (
+          <div className="h-1 overflow-hidden rounded-full bg-white/10">
+            <div className="h-full bg-green transition-all" style={{ width: `${pct ?? 0}%` }} />
+          </div>
+        )}
+        <input ref={file} type="file" accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov,.m4v" className="hidden" onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])} />
       </div>
     </div>
   );
@@ -215,6 +296,23 @@ function FieldInput({ field, value, onChange, options }: { field: Field; value: 
       );
     case "image":
       return <ImageInput value={(value as string) ?? ""} onChange={onChange} />;
+    case "video":
+      return <VideoInput value={(value as string) ?? ""} onChange={onChange} />;
+    case "select": {
+      const opts = options[field.source] ?? [];
+      const v = (value as string) ?? "";
+      return (
+        <select className={`${inputCls} font-latin`} value={v} onChange={(e) => onChange(e.target.value)}>
+          <option value="">{field.empty ?? "—"}</option>
+          {opts.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+          {v && !opts.some((o) => o.value === v) && <option value={v}>{v} (محذوف)</option>}
+        </select>
+      );
+    }
     case "color":
       return (
         <div className="flex flex-wrap gap-2">
@@ -267,7 +365,7 @@ function FieldInput({ field, value, onChange, options }: { field: Field; value: 
 }
 
 export function Fields({ fields, value, onChange, options }: { fields: Field[]; value: Obj; onChange: (v: Obj) => void; options: Options }) {
-  const wide = (f: Field) => ["l", "list", "group", "lList", "image", "multi", "icon"].includes(f.type);
+  const wide = (f: Field) => ["l", "list", "group", "lList", "image", "video", "multi", "icon"].includes(f.type);
   return (
     <div className="grid gap-5 md:grid-cols-2">
       {fields.map((f) => (

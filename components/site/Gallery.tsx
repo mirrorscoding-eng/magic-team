@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { projectHref } from "@/lib/pages";
 import type {
   CaseStudy,
@@ -14,6 +14,13 @@ import type {
 import { t } from "@/lib/types";
 import { SectionHead } from "./SectionHead";
 import { Reveal } from "./shown";
+import { AmbientVideo, VideoPlayer } from "./Video";
+import { isVertical, parseVideo, posterOf } from "@/lib/video";
+
+const tileAspect = (video: string) => {
+  const v = parseVideo(video);
+  return v && v.kind !== "file" && !isVertical(v) ? "aspect-video" : "aspect-[9/16]";
+};
 
 const FILTERS: { key: "all" | GalleryCategory; label: L; color: string }[] = [
   { key: "all", label: { ar: "الكل", en: "All" }, color: "orchid" },
@@ -49,39 +56,6 @@ function countLabel(n: number, locale: Locale) {
   if (n === 1) return "عمل واحد";
   if (n === 2) return "عملين";
   return `${n.toLocaleString("ar-IQ")} ${n <= 10 ? "أعمال" : "عمل"}`;
-}
-
-/** Plays a muted loop only while it is on screen. */
-function AutoVideo({
-  item,
-  className,
-}: {
-  item: GalleryItem;
-  className: string;
-}) {
-  const ref = useRef<HTMLVideoElement>(null);
-  useEffect(() => {
-    const v = ref.current;
-    if (!v) return;
-    const io = new IntersectionObserver(
-      ([e]) => (e.isIntersecting ? v.play().catch(() => {}) : v.pause()),
-      { threshold: 0.35 },
-    );
-    io.observe(v);
-    return () => io.disconnect();
-  }, []);
-  return (
-    <video
-      ref={ref}
-      src={item.video}
-      poster={item.image}
-      muted
-      loop
-      playsInline
-      preload="none"
-      className={className}
-    />
-  );
 }
 
 function Lightbox({
@@ -161,16 +135,7 @@ function Lightbox({
       </div>
       <div className="relative flex min-h-0 flex-1 items-center justify-center px-14 pb-8 md:px-24">
         {it.video ? (
-          <video
-            key={it.video}
-            src={it.video}
-            poster={it.image}
-            controls
-            autoPlay
-            playsInline
-            className="max-h-full max-w-full rounded-2xl"
-            onClick={(e) => e.stopPropagation()}
-          />
+          <VideoPlayer video={it.video} image={it.image} title={t(it.title, locale)} />
         ) : (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -222,7 +187,7 @@ export function Gallery({ data, locale }: { data: GalleryT; locale: Locale }) {
         <div className="mt-12 grid gap-4 sm:grid-cols-2 md:gap-5 lg:grid-cols-3">
           {data.projects.map((p, i) => {
             const cats = categoriesOf(p);
-            const cover = p.cover || p.items[0]?.image;
+            const cover = p.cover || posterOf(p.items[0]?.video, p.items[0]?.image);
             return (
               <Link
                 key={p.slug}
@@ -466,9 +431,10 @@ export function ProjectDetail({
                 aria-label={t(it.title, locale)}
               >
                 {it.video ? (
-                  <AutoVideo
-                    item={it}
-                    className="block aspect-[9/16] w-full object-cover"
+                  <AmbientVideo
+                    video={it.video}
+                    image={it.image}
+                    className={`block w-full ${tileAspect(it.video)}`}
                   />
                 ) : (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -545,10 +511,10 @@ export function ProjectDetail({
               href={projectHref(locale, next.slug)}
               className={`reveal group relative mt-24 block overflow-hidden rounded-[2rem] ring-1 ring-white/10 transition hover:ring-[color:var(--c)]/70 c-${next.color || "orchid"}`}
             >
-              {(next.cover || next.items[0]?.image) && (
+              {(next.cover || posterOf(next.items[0]?.video, next.items[0]?.image)) && (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
-                  src={next.cover || next.items[0]?.image}
+                  src={next.cover || posterOf(next.items[0]?.video, next.items[0]?.image)}
                   alt=""
                   loading="lazy"
                   className="absolute inset-0 h-full w-full object-cover opacity-45 transition duration-[1400ms] ease-out group-hover:scale-105 group-hover:opacity-60"

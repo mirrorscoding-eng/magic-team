@@ -478,19 +478,13 @@ export const seed: Content = {
     pills: [
       { label: { ar: "MARKETING", en: "MARKETING" }, color: "lilac" },
     ],
+    // one card per project (different clients), the reel plays inside its card
     cards: [
-      {
-        "image": "/work/photo/shoot-09.jpg",
-        "alt": "Viking Burger food shoot by Magic Team — burger and fries"
-      },
-      {
-        "image": "/work/photo/shoot-02.jpg",
-        "alt": "Viking Burger food shoot by Magic Team — sandwich close-up"
-      },
-      {
-        "image": "/work/photo/shoot-11.jpg",
-        "alt": "Viking Burger food shoot by Magic Team — ice cream"
-      }
+      { project: "viking-burger", image: "/work/photo/shoot-09.jpg", video: "", alt: "Viking Burger food shoot by Magic Team — burger and fries" },
+      { project: "chicken-rays", image: "/work/reel-poster.jpg", video: "/work/reel.mp4", alt: "Chicken Ray's reel by Magic Team" },
+      { project: "og-burger", image: "/work/brand/og-bag.jpg", video: "", alt: "OG Burger branding by Magic Team — paper bags" },
+      { project: "nara", image: "/work/brand/nara-sign.jpg", video: "", alt: "Nara by Naranj branding by Magic Team — restaurant sign" },
+      { project: "hamish-roastery", image: "/work/brand/hamish-red.jpg", video: "", alt: "Hamish Roastery branding by Magic Team" },
     ],
   },
   gallery: {

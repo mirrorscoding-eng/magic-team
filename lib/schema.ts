@@ -6,6 +6,8 @@ export type Field =
   | { type: "number"; key: string; label: string; step?: number }
   | { type: "bool"; key: string; label: string }
   | { type: "image"; key: string; label: string }
+  | { type: "video"; key: string; label: string }
+  | { type: "select"; key: string; label: string; source: "projects"; empty?: string }
   | { type: "color"; key: string; label: string }
   | { type: "icon"; key: string; label: string; icons: string[] }
   | { type: "multi"; key: string; label: string; source: "sections" | "cases" }
@@ -62,7 +64,19 @@ export const SCHEMAS: EditorSchema[] = [
       { type: "l", key: "subtitle", label: "الوصف", multiline: true },
       { type: "l", key: "ctaPrimary", label: "نص الزر الأساسي (يودي للأعمال)" },
       { type: "l", key: "ctaSecondary", label: "نص الزر الثانوي (يودي للتواصل)" },
-      { type: "list", key: "cards", label: "بطاقات المنشورات (أول بطاقة تطلع قدّام)", titleKey: "alt", addLabel: "إضافة بطاقة", item: [{ type: "image", key: "image", label: "صورة المنشور (يفضّل 4:5)" }, { type: "text", key: "alt", label: "وصف الصورة", ltr: true }] },
+      {
+        type: "list",
+        key: "cards",
+        label: "بطاقات المنشورات (أول بطاقة تطلع قدّام) — خلّي كل بطاقة من مشروع مختلف",
+        titleKey: "project",
+        addLabel: "إضافة بطاقة",
+        item: [
+          { type: "select", key: "project", label: "المشروع (اسمه يطلع على البطاقة ويودي لصفحته)", source: "projects", empty: "بدون مشروع" },
+          { type: "image", key: "image", label: "صورة المنشور (يفضّل 4:5) — إذا فارغة تنأخذ صورة غلاف المشروع" },
+          { type: "video", key: "video", label: "فيديو (اختياري) — يشتغل داخل البطاقة بدل الصورة" },
+          { type: "text", key: "alt", label: "وصف الصورة", ltr: true },
+        ],
+      },
     ],
   },
   {
@@ -203,7 +217,7 @@ export const SCHEMAS: EditorSchema[] = [
               { type: "l", key: "title", label: "عنوان العمل" },
               { type: "text", key: "category", label: "النوع: photo أو branding أو design أو video", ltr: true, placeholder: "photo" },
               { type: "image", key: "image", label: "الصورة (للفيديو: صورة الغلاف)" },
-              { type: "text", key: "video", label: "رابط الفيديو mp4 (اختياري)", ltr: true, placeholder: "/work/reel.mp4" },
+              { type: "video", key: "video", label: "فيديو (اختياري): ارفع ملف أو الصق رابط يوتيوب / فيميو / تيك توك / انستغرام" },
             ],
           },
         ],

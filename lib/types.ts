@@ -43,7 +43,8 @@ export type Hero = {
   ctaPrimary: L;
   ctaSecondary: L;
   pills: { label: L; color: BrandColor }[];
-  cards: { image: string; alt: string }[];
+  /** Post cards, each from a portfolio project (gallery.projects slug); `video` = upload or YouTube/Vimeo/TikTok/Instagram link. */
+  cards: { project: string; image: string; video?: string; alt: string }[];
 };
 
 export type ClientLogo = { name: string; logo: string };
@@ -60,6 +61,7 @@ export type Team = {
 };
 
 export type GalleryCategory = "photo" | "branding" | "design" | "video";
+/** `video`: an uploaded/hosted file or a YouTube, Vimeo, TikTok or Instagram link (see lib/video.ts). */
 export type GalleryItem = { title: L; category: GalleryCategory; image: string; video?: string };
 /** One client project: its own page at /work/<slug> with all of its work. */
 export type Project = { slug: string; client: string; logo: string; color: BrandColor; title: L; summary: L; cover: string; items: GalleryItem[] };

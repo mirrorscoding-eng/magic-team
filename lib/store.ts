@@ -39,6 +39,8 @@ export async function getContent(): Promise<Content> {
   const content = { ...structuredClone(seed), ...stored } as Content;
   // the portfolio moved from one flat list to per-project pages
   if (!Array.isArray(content.gallery?.projects)) content.gallery = structuredClone(seed.gallery);
+  // hero cards used to be plain images from a single shoot; now each card points at a project
+  if (content.hero?.cards?.length && content.hero.cards.every((c) => !("project" in c))) content.hero.cards = structuredClone(seed.hero.cards);
   const have = new Set(content.settings.sections.map((s) => s.key));
   for (const key of SECTION_KEYS) {
     if (have.has(key)) continue;

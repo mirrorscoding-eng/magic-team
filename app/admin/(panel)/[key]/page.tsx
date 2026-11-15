@@ -17,6 +17,7 @@ export default async function EditPage({ params }: PageProps<"/admin/[key]">) {
   const options = {
     sections: SECTION_KEYS.map((s) => ({ value: s, label: SECTION_LABELS[s].ar })),
     cases: content.cases.items.map((c) => ({ value: c.id, label: c.client })),
+    projects: (content.gallery?.projects ?? []).map((p) => ({ value: p.slug, label: p.client })),
   };
   return (
     <>
