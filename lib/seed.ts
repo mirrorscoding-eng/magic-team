@@ -1510,7 +1510,7 @@ export const seed: Content = {
       en: "Tell us about your project and our team will reach out within 24 hours.",
     },
     button: { ar: "أرسل الطلب", en: "Send request" },
-    success: { ar: "وصلنا طلبك ✨ راح نتواصل وياك قريباً.", en: "Got it ✨ We'll be in touch soon." },
+    success: { ar: "وصلنا طلبك. راح نتواصل وياك قريباً.", en: "Got it. We'll be in touch soon." },
     serviceOptions: [
       { ar: "إدارة حملات", en: "Campaign management" },
       { ar: "سوشيال ميديا", en: "Social media" },

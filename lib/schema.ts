@@ -1,6 +1,7 @@
 import type { ContentKey } from "./types";
 
-export type Field =
+/** `help` overrides the generic how-to text shown when hovering a field. */
+export type Field = (
   | { type: "l"; key: string; label: string; multiline?: boolean }
   | { type: "text"; key: string; label: string; ltr?: boolean; placeholder?: string }
   | { type: "number"; key: string; label: string; step?: number }
@@ -13,8 +14,9 @@ export type Field =
   | { type: "icon"; key: string; label: string; icons: string[] }
   | { type: "multi"; key: string; label: string; source: "sections" | "cases" }
   | { type: "group"; key: string; label: string; fields: Field[] }
-  | { type: "list"; key: string; label: string; item: Field[]; titleKey?: string; addLabel?: string }
-  | { type: "lList"; key: string; label: string };
+  | { type: "list"; key: string; label: string; item: Field[]; titleKey?: string; addLabel?: string; /** most items allowed */ max?: number }
+  | { type: "lList"; key: string; label: string }
+) & { help?: string };
 
 export type EditorSchema = {
   key: ContentKey;
@@ -68,7 +70,8 @@ export const SCHEMAS: EditorSchema[] = [
       {
         type: "list",
         key: "cards",
-        label: "بطاقات المنشورات (أول بطاقة تطلع قدّام) — خلّي كل بطاقة من مشروع مختلف",
+        label: "بطاقات المنشورات (أول بطاقة تطلع قدّام، والباقي حواليها) — من ٢ إلى ٥ بطاقات، خلّي كل بطاقة من مشروع مختلف",
+        max: 5,
         titleKey: "project",
         addLabel: "إضافة بطاقة",
         item: [
@@ -201,7 +204,7 @@ export const SCHEMAS: EditorSchema[] = [
         titleKey: "client",
         addLabel: "إضافة مشروع",
         item: [
-          { type: "text", key: "slug", label: "رابط الصفحة (إنكليزي بدون فراغات، مثل og-burger)", ltr: true, placeholder: "og-burger" },
+          { type: "text", key: "slug", label: "رابط الصفحة (إنكليزي بدون فراغات، مثل og-burger)", ltr: true, placeholder: "og-burger", help: "هذا آخر جزء من رابط صفحة المشروع. حروف إنكليزية صغيرة وشَرطة بدل الفراغ، مثل og-burger. لا تغيّره بعد النشر لأن الروابط القديمة تبطل." },
           { type: "text", key: "client", label: "اسم العميل", ltr: true },
           { type: "image", key: "logo", label: "شعار العميل" },
           { type: "color", key: "color", label: "لون المشروع" },
@@ -216,7 +219,7 @@ export const SCHEMAS: EditorSchema[] = [
             addLabel: "إضافة عمل",
             item: [
               { type: "l", key: "title", label: "عنوان العمل" },
-              { type: "text", key: "category", label: "النوع: photo أو branding أو design أو video", ltr: true, placeholder: "photo" },
+              { type: "text", key: "category", label: "النوع: photo أو branding أو design أو video", ltr: true, placeholder: "photo", help: "اكتب كلمة وحدة بالضبط: photo للتصوير، branding للهوية، design للتصاميم، video للفيديو. تنستخدم لفلترة الأعمال." },
               { type: "image", key: "image", label: "الصورة (للفيديو: صورة الغلاف)" },
               { type: "video", key: "video", label: "فيديو (اختياري): ارفع ملف أو الصق رابط يوتيوب / فيميو / تيك توك / انستغرام" },
             ],
@@ -239,7 +242,7 @@ export const SCHEMAS: EditorSchema[] = [
         titleKey: "client",
         addLabel: "إضافة قصة",
         item: [
-          { type: "text", key: "id", label: "المعرّف (إنكليزي بدون فراغات)", ltr: true },
+          { type: "text", key: "id", label: "المعرّف (إنكليزي بدون فراغات)", ltr: true, help: "اسم داخلي للقصة بالإنكليزي بدون فراغات (مثل og-burger). تستخدمه العروض المخصصة حتى تختار القصة، فلا تغيّره بعد ما تستخدمه." },
           { type: "text", key: "client", label: "اسم العميل", ltr: true },
           { type: "image", key: "logo", label: "شعار العميل" },
           { type: "l", key: "industry", label: "المجال" },
@@ -263,8 +266,8 @@ export const SCHEMAS: EditorSchema[] = [
               { type: "number", key: "after", label: "بعد ماجك", step: 0.1 },
               { type: "text", key: "prefix", label: "قبل الرقم (مثل $)", ltr: true },
               { type: "text", key: "suffix", label: "بعد الرقم (مثل % أو x)", ltr: true },
-              { type: "number", key: "decimals", label: "عدد المراتب العشرية" },
-              { type: "bool", key: "lowerIsBetter", label: "الأقل أفضل (مثل التكلفة)" },
+              { type: "number", key: "decimals", label: "عدد المراتب العشرية", help: "كم رقم يطلع بعد الفاصلة. 0 = رقم صحيح (12)، 1 = (12.5)." },
+              { type: "bool", key: "lowerIsBetter", label: "الأقل أفضل (مثل التكلفة)", help: "شغّله إذا نزول الرقم شي زين، مثل تكلفة الإعلان. هيچ الموقع يعرض النزول كنجاح." },
             ],
           },
         ],
@@ -343,12 +346,12 @@ export const SCHEMAS: EditorSchema[] = [
         titleKey: "client",
         addLabel: "عرض جديد",
         item: [
-          { type: "text", key: "slug", label: "رابط العرض (إنكليزي، مثل: clinic-pitch)", ltr: true },
+          { type: "text", key: "slug", label: "رابط العرض (إنكليزي، مثل: clinic-pitch)", ltr: true, help: "يصير رابط العرض اللي ترسله للعميل: /present/clinic-pitch. حروف إنكليزية وشَرطة بدل الفراغ." },
           { type: "text", key: "client", label: "اسم العميل", ltr: true },
           { type: "image", key: "clientLogo", label: "شعار العميل (اختياري)" },
           { type: "l", key: "note", label: "ملاحظة بالغلاف" },
-          { type: "multi", key: "sections", label: "الأقسام بالترتيب", source: "sections" },
-          { type: "multi", key: "caseIds", label: "القصص المعروضة (فارغ = الكل)", source: "cases" },
+          { type: "multi", key: "sections", label: "الأقسام بالترتيب", source: "sections", help: "اضغط على الأقسام اللي تريدها تطلع بالعرض بالترتيب اللي تريده. الرقم جنب كل قسم هو ترتيبه. اضغط × حتى تشيله." },
+          { type: "multi", key: "caseIds", label: "القصص المعروضة (فارغ = الكل)", source: "cases", help: "اختار قصص النجاح اللي تناسب هذا العميل. إذا ما اخترت ولا وحدة، تطلع كل القصص." },
         ],
       },
     ],
@@ -359,16 +362,16 @@ export const SCHEMAS: EditorSchema[] = [
     description: "معلومات التواصل، السوشيال ميديا، وعنوان الموقع بمحركات البحث.",
     fields: [
       { type: "text", key: "siteName", label: "اسم الموقع", ltr: true },
-      { type: "l", key: "seoTitle", label: "عنوان الصفحة (SEO)" },
-      { type: "l", key: "seoDescription", label: "وصف الصفحة (SEO)", multiline: true },
+      { type: "l", key: "seoTitle", label: "عنوان الصفحة (SEO)", help: "العنوان اللي يطلع بنتائج كوكل وبتبويب المتصفح. خلّيه قصير وواضح (أقل من ٦٠ حرف)." },
+      { type: "l", key: "seoDescription", label: "وصف الصفحة (SEO)", multiline: true, help: "السطرين اللي يطلعون تحت العنوان بنتائج كوكل. جملة أو جملتين عن ماجك." },
       { type: "text", key: "email", label: "البريد الإلكتروني", ltr: true },
       { type: "text", key: "phone", label: "رقم الهاتف", ltr: true },
-      { type: "text", key: "whatsapp", label: "رقم الواتساب (أرقام فقط مع رمز الدولة)", ltr: true },
+      { type: "text", key: "whatsapp", label: "رقم الواتساب (أرقام فقط مع رمز الدولة)", ltr: true, help: "أرقام فقط بدون + وبدون فراغات، تبدي برمز الدولة. مثال: 9647701234567" },
       { type: "l", key: "address", label: "العنوان" },
       { type: "text", key: "instagram", label: "رابط إنستغرام", ltr: true },
       { type: "text", key: "tiktok", label: "رابط تيك توك", ltr: true },
       { type: "text", key: "linkedin", label: "رابط لينكدإن", ltr: true },
-      { type: "l", key: "notice", label: "شارة الملاحظة أسفل الموقع (اتركها فارغة لإخفائها)" },
+      { type: "l", key: "notice", label: "شارة الملاحظة أسفل الموقع (اتركها فارغة لإخفائها)", help: "جملة قصيرة تطلع أسفل الموقع، مثل إعلان أو تنبيه. امسح النص من الخانتين حتى تختفي." },
       {
         type: "group",
         key: "wave",

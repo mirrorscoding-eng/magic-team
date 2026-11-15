@@ -3,6 +3,7 @@ import { useState, useSyncExternalStore } from "react";
 
 const noop = () => () => {};
 import { Icon } from "@/components/brand/Icon";
+import { tip } from "@/lib/tip";
 import type { Presentation } from "@/lib/types";
 
 export function DeckLinks({ decks }: { decks: Presentation[] }) {
@@ -29,10 +30,10 @@ export function DeckLinks({ decks }: { decks: Presentation[] }) {
                   <div className="truncate font-latin font-bold">{d.client}</div>
                   <div className="truncate font-latin text-xs text-lilac/50" dir="ltr">{path}</div>
                 </div>
-                <button onClick={() => copy(full)} className="rounded-lg px-3 py-2 text-xs text-lilac/80 hover:bg-white/10">
-                  {copied === full ? "تم النسخ ✓" : "نسخ"}
+                <button {...tip("نسخ الرابط", "ينسخ رابط العرض حتى تلصقه برسالة للعميل (واتساب، إيميل...).")} onClick={() => copy(full)} className="rounded-lg px-3 py-2 text-xs text-lilac/80 hover:bg-white/10">
+                  {copied === full ? "تم النسخ" : "نسخ"}
                 </button>
-                <a href={path} target="_blank" className="grid h-9 w-9 place-items-center rounded-full bg-orchid text-ink" aria-label="فتح">
+                <a href={path} target="_blank" {...tip("فتح العرض", "يفتح العرض بتبويب جديد مثل ما يشوفه العميل.")} className="grid h-9 w-9 place-items-center rounded-full bg-orchid text-ink" aria-label="فتح">
                   <Icon name="present" className="h-4 w-4" />
                 </a>
               </div>

@@ -9,93 +9,143 @@ import { t } from "@/lib/types";
 import { SlideContext, useShown } from "./shown";
 import { AmbientVideo, VideoPlayer } from "./Video";
 
-/** Slot layout for the stacked post cards (physical positions, container is LTR). */
-const SLOTS = [
-  { x: 20, y: 0, r: -4, s: 1, z: 30, depth: 26 }, // front
-  { x: 44, y: 9, r: 7, s: 0.94, z: 20, depth: 16 }, // behind, right
-  { x: 0, y: 20, r: -11, s: 0.92, z: 10, depth: 8 }, // behind, left
-];
-const HIDDEN = { x: 22, y: 14, r: 0, s: 0.85, z: 0, depth: 0 };
+/** The hero shows at most this many post cards: one in front, the rest fanned out on both sides. */
+export const MAX_HERO_CARDS = 5;
+
+/**
+ * Where a card sits by its distance from the front card (negative = left, positive = right; container is LTR).
+ * Every card always has a place, so moving through them just slides each one to its neighbour's spot.
+ */
+function slotFor(offset: number, spread: boolean) {
+  const d = Math.min(Math.abs(offset), 2);
+  const side = Math.sign(offset);
+  const L = [
+    { dx: 0, y: 0, r: -3, s: 1, z: 50, depth: 26, dim: 1, fan: 0 },
+    { dx: 20, y: 8, r: 7, s: 0.86, z: 40, depth: 16, dim: 0.78, fan: 3 },
+    { dx: 33, y: 15, r: 12, s: 0.72, z: 30, depth: 8, dim: 0.58, fan: 5 },
+  ][d];
+  return {
+    x: 27 + side * (L.dx + (spread ? L.fan : 0)),
+    y: L.y,
+    r: d === 0 ? L.r : side * (L.r + (spread ? 2 : 0)),
+    s: L.s,
+    z: L.z,
+    depth: L.depth,
+    dim: L.dim,
+  };
+}
 
 type CardProject = Pick<Project, "slug" | "client" | "color" | "cover">;
 
 function PostStack({ cards, projects, locale, shown }: { cards: HeroT["cards"]; projects: CardProject[]; locale: Locale; shown: boolean }) {
-  const [order, setOrder] = useState(() => cards.map((_, i) => i));
+  const n = cards.length;
+  const [activeRaw, setActive] = useState(0);
   const [hover, setHover] = useState(false);
   const [playing, setPlaying] = useState<number | null>(null);
   const box = useRef<HTMLDivElement>(null);
+  const swipe = useRef<{ x: number; moved: boolean } | null>(null);
+  const swiped = useRef(false);
 
-  // keep order valid if the dashboard changes the number of cards
-  const valid = order.length === cards.length ? order : cards.map((_, i) => i);
-  const next = () => setOrder((o) => (o.length > 1 ? [...o.slice(1), o[0]] : o));
+  // keep the front card valid if the dashboard removes cards
+  const active = n ? activeRaw % n : 0;
+  const go = (step: number) => setActive((a) => (((a + step) % n) + n) % n);
+  // offsets run from the left end to the right end; an even count puts the extra card on the right
+  const lo = -Math.floor((n - 1) / 2);
+  const offsetOf = (i: number) => ((((i - active - lo) % n) + n) % n) + lo;
 
-  // "swipe to find out": the stack shuffles by itself while nobody is hovering
+  // "swipe to find out": the stack moves by itself while nobody is hovering
   useEffect(() => {
-    if (!shown || hover || playing !== null || cards.length < 2) return;
-    const id = setInterval(next, 4200);
+    if (!shown || hover || playing !== null || n < 2) return;
+    const id = setInterval(() => setActive((a) => (a + 1) % n), 4200);
     return () => clearInterval(id);
-  }, [shown, hover, playing, cards.length]);
+  }, [shown, hover, playing, n]);
 
   const onMove = (e: React.PointerEvent) => {
     const r = box.current?.getBoundingClientRect();
     if (!r) return;
     box.current!.style.setProperty("--px", String((e.clientX - r.left) / r.width - 0.5));
     box.current!.style.setProperty("--py", String((e.clientY - r.top) / r.height - 0.5));
+    if (swipe.current && Math.abs(e.clientX - swipe.current.x) > 10) swipe.current.moved = true;
   };
 
   return (
     <div
       ref={box}
       dir="ltr"
-      className="relative mx-auto aspect-[1/0.92] w-full max-w-[38rem] select-none"
+      className="relative mx-auto aspect-[1/0.92] w-full max-w-[40rem] touch-pan-y select-none"
       onPointerEnter={() => setHover(true)}
       onPointerLeave={() => {
         setHover(false);
+        swipe.current = null;
         box.current?.style.setProperty("--px", "0");
         box.current?.style.setProperty("--py", "0");
       }}
       onPointerMove={onMove}
+      onPointerDown={(e) => {
+        swipe.current = { x: e.clientX, moved: false };
+        swiped.current = false;
+      }}
+      onPointerUp={(e) => {
+        const sw = swipe.current;
+        swipe.current = null;
+        if (!sw?.moved) return;
+        const dx = e.clientX - sw.x;
+        if (Math.abs(dx) < 40) return;
+        swiped.current = true; // the click that follows a swipe shouldn't also move the stack
+        go(dx < 0 ? 1 : -1); // drag left → the card on the right comes forward
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "ArrowRight") go(1);
+        else if (e.key === "ArrowLeft") go(-1);
+        else return;
+        e.preventDefault();
+      }}
     >
       {cards.map((c, i) => {
-        const slot = valid.indexOf(i);
-        const p = SLOTS[slot] ?? HIDDEN;
-        const fan = hover ? (slot === 0 ? 0 : slot === 1 ? 4 : -5) : 0;
+        const offset = offsetOf(i);
+        const p = slotFor(offset, hover);
         const enter = shown ? "" : "translate(0, 90px) rotate(0deg) scale(.9)";
         const proj = projects.find((x) => x.slug === c.project);
         const image = c.image || posterOf(c.video, "") || proj?.cover || "";
-        const front = slot === 0;
+        const front = offset === 0;
         return (
           <div
             key={i}
-            className="absolute top-0 w-[54%]"
+            className="absolute top-0 w-[46%]"
             style={{
-              left: `${p.x + (hover ? (slot === 1 ? 4 : slot === 2 ? -4 : 0) : 0)}%`,
+              left: `${p.x}%`,
               top: `${p.y}%`,
               zIndex: p.z,
-              opacity: shown && SLOTS[slot] ? 1 : 0,
-              pointerEvents: SLOTS[slot] ? undefined : "none",
+              opacity: shown ? 1 : 0,
               transform:
                 enter ||
-                `translate(calc(var(--px, 0) * ${p.depth}px), calc(var(--py, 0) * ${p.depth}px)) rotate(${p.r + fan}deg) scale(${p.s})`,
-              transition: `transform 1s cubic-bezier(.16,1,.3,1), left .9s cubic-bezier(.16,1,.3,1), top .9s cubic-bezier(.16,1,.3,1), opacity .8s ease ${shown ? 0.25 + (2 - Math.min(slot, 2)) * 0.12 : 0}s`,
+                `translate(calc(var(--px, 0) * ${p.depth}px), calc(var(--py, 0) * ${p.depth}px)) rotate(${p.r}deg) scale(${p.s})`,
+              transition: `transform .9s cubic-bezier(.16,1,.3,1), left .9s cubic-bezier(.16,1,.3,1), top .9s cubic-bezier(.16,1,.3,1), opacity .8s ease ${shown ? 0.25 + (2 - Math.min(Math.abs(offset), 2)) * 0.12 : 0}s`,
             }}
           >
             <button
               type="button"
               onClick={() => {
+                if (swiped.current) {
+                  swiped.current = false;
+                  return;
+                }
+                if (!front) return go(offset); // a side card comes to the front, from whichever side it's on
                 // TikTok / Instagram can't play silently in the card: the front one opens a player instead
                 const v = parseVideo(c.video);
-                if (front && v && !canAmbient(v)) setPlaying(i);
-                else next();
+                if (v && !canAmbient(v)) setPlaying(i);
+                else go(1);
               }}
               aria-label={c.alt}
+              aria-current={front || undefined}
               className="relative block w-full cursor-pointer overflow-hidden rounded-[1.6rem] border border-white/10 shadow-[0_50px_90px_-25px_rgba(0,0,0,.75)] outline-none focus-visible:ring-2 focus-visible:ring-orchid"
+              style={{ filter: `brightness(${p.dim})`, transition: "filter .9s ease" }}
             >
               {c.video ? (
                 <AmbientVideo video={c.video} image={image} alt={c.alt} eager={front} className="aspect-[4/5] w-full" />
               ) : (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={image} alt={c.alt} className="block aspect-[4/5] w-full object-cover" draggable={false} loading={front ? "eager" : "lazy"} />
+                <img src={image} alt={c.alt} className="block aspect-[4/5] w-full object-cover" draggable={false} loading={Math.abs(offset) <= 1 ? "eager" : "lazy"} />
               )}
               <span className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-ink/70 to-transparent" />
             </button>
@@ -103,7 +153,9 @@ function PostStack({ cards, projects, locale, shown }: { cards: HeroT["cards"]; 
               <Link
                 href={projectHref(locale, proj.slug)}
                 tabIndex={front ? 0 : -1}
-                className={`c-${proj.color || "orchid"} absolute bottom-3.5 left-3.5 flex items-center gap-2 rounded-full bg-ink/65 py-1.5 pe-3.5 ps-2.5 font-latin text-xs font-bold text-white ring-1 ring-white/15 backdrop-blur-md transition hover:bg-[color:var(--c)] hover:text-ink`}
+                // only the front card's chip is a link; on the side cards a click anywhere brings the card forward
+                style={{ pointerEvents: front ? undefined : "none", opacity: front ? 1 : 0.75, transition: "opacity .9s ease, background-color .2s, color .2s" }}
+                className={`c-${proj.color || "orchid"} absolute bottom-3 left-3 flex max-w-[calc(100%-1.5rem)] items-center gap-1.5 whitespace-nowrap rounded-full bg-ink/65 py-1.5 pe-3 ps-2.5 font-latin text-[10px] font-bold sm:bottom-3.5 sm:left-3.5 sm:gap-2 sm:pe-3.5 sm:text-xs text-white ring-1 ring-white/15 backdrop-blur-md hover:bg-[color:var(--c)] hover:text-ink`}
               >
                 <span className="h-2 w-2 rounded-full bg-[color:var(--c)]" />
                 {proj.client}
@@ -145,7 +197,7 @@ export function Hero({ data, projects = [], locale }: { data: HeroT; projects?: 
   // On the page the hero is above the fold: reveal it with CSS on first paint (no wait for JS).
   const shown = inDeck ? seen : true;
   const ar = locale === "ar";
-  const cards = data.cards ?? [];
+  const cards = (data.cards ?? []).slice(0, MAX_HERO_CARDS);
   return (
     <section ref={ref} id="hero" className={`grain relative flex min-h-[100dvh] items-center overflow-hidden px-5 pb-20 pt-32 md:px-10 ${inDeck ? (shown ? "is-shown" : "") : "hero-css"}`}>
       <div className="aurora" aria-hidden>

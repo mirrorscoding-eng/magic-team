@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ResetDemo } from "@/components/admin/ResetDemo";
 import { SectionsManager } from "@/components/admin/SectionsManager";
 import { Icon } from "@/components/brand/Icon";
+import { tip } from "@/lib/tip";
 import { requireAdmin } from "@/lib/auth";
 import { getContent, getMessages } from "@/lib/store";
 
@@ -10,22 +11,26 @@ export default async function Overview() {
   const [content, messages] = await Promise.all([getContent(), getMessages()]);
   const unread = messages.filter((m) => !m.read).length;
   const stats = [
-    { label: "شعارات العملاء", value: content.clients.logos.length, href: "/admin/clients", color: "c-lilac" },
-    { label: "قصص النجاح", value: content.cases.items.length, href: "/admin/cases", color: "c-yellow" },
-    { label: "العروض المخصصة", value: content.presentations.length, href: "/admin/presentations", color: "c-cyan" },
-    { label: "رسائل جديدة", value: unread, href: "/admin/messages", color: "c-green" },
+    { label: "شعارات العملاء", value: content.clients.logos.length, href: "/admin/clients", color: "c-lilac", help: "عدد الشعارات بشريط العملاء. اضغط حتى تضيف أو تعدّل." },
+    { label: "قصص النجاح", value: content.cases.items.length, href: "/admin/cases", color: "c-yellow", help: "عدد قصص النجاح المنشورة. اضغط حتى تضيف قصة أو تعدّلها." },
+    { label: "العروض المخصصة", value: content.presentations.length, href: "/admin/presentations", color: "c-cyan", help: "العروض الخاصة اللي سويتها للعملاء. اضغط حتى تسوي عرض جديد." },
+    { label: "رسائل جديدة", value: unread, href: "/admin/messages", color: "c-green", help: "رسائل نموذج التواصل اللي بعدك ما قريتها. اضغط حتى تفتحها." },
   ];
   return (
     <div className="mx-auto max-w-5xl space-y-8">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-sm text-orchid">هلا بيك 👋</p>
+          <p className="text-sm text-orchid">هلا بيك</p>
           <h1 className="mt-1 text-3xl font-bold">لوحة تحكم ماجك</h1>
           <p className="mt-2 text-sm text-lilac/60">كل تعديل تحفظه يطلع مباشرة على الموقع ووضع العرض.</p>
+          <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1.5 text-xs text-lilac/70">
+            <Icon name="spark" className="h-3.5 w-3.5 text-orchid" />
+            محتار شنو يسوي أي زر؟ وگّف الماوس عليه لحظة ويطلعلك الشرح.
+          </p>
         </div>
         <div className="flex gap-2">
-          <a href="/ar" target="_blank" className="btn btn-ghost py-2.5!">عرض الموقع</a>
-          <a href="/ar/present" target="_blank" className="btn btn-primary py-2.5!">
+          <a href="/ar" target="_blank" {...tip("عرض الموقع", "يفتح الموقع مثل ما يشوفه الزوار، بتبويب جديد.")} className="btn btn-ghost py-2.5!">عرض الموقع</a>
+          <a href="/ar/present" target="_blank" {...tip("ابدأ العرض", "يفتح الموقع كعرض تقديمي بشاشة كاملة. تتنقل بين الأقسام بالأسهم، مناسب للاجتماعات.")} className="btn btn-primary py-2.5!">
             ابدأ العرض <span className="arrow"><Icon name="present" className="h-4 w-4" /></span>
           </a>
         </div>
@@ -33,7 +38,7 @@ export default async function Overview() {
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {stats.map((s) => (
-          <Link key={s.label} href={s.href} className={`group rounded-3xl p-5 text-ink transition hover:-translate-y-1 ${s.color}`} style={{ background: "var(--c)" }}>
+          <Link key={s.label} href={s.href} {...tip(s.label, s.help)} className={`group rounded-3xl p-5 text-ink transition hover:-translate-y-1 ${s.color}`} style={{ background: "var(--c)" }}>
             <div className="font-latin text-4xl font-extrabold">{s.value}</div>
             <div className="mt-2 flex items-center justify-between text-sm font-semibold">
               {s.label}
@@ -49,7 +54,7 @@ export default async function Overview() {
           <div className="card p-5 md:p-6">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-bold">العروض المخصصة</h2>
-              <Link href="/admin/presentations" className="text-sm text-orchid hover:underline">إدارة</Link>
+              <Link href="/admin/presentations" {...tip("إدارة العروض", "يوديك لصفحة العروض المخصصة حتى تضيف أو تعدّل أو تنسخ الروابط.")} className="text-sm text-orchid hover:underline">إدارة</Link>
             </div>
             <ul className="space-y-2">
               {content.presentations.map((p) => (
@@ -58,7 +63,7 @@ export default async function Overview() {
                     <div className="truncate font-latin font-bold">{p.client}</div>
                     <div className="text-xs text-lilac/50">{p.sections.length} أقسام · {p.caseIds.length || "كل"} قصص</div>
                   </div>
-                  <a href={`/ar/present/${p.slug}`} target="_blank" className="grid h-9 w-9 place-items-center rounded-full bg-orchid text-ink" aria-label="فتح العرض">
+                  <a href={`/ar/present/${p.slug}`} target="_blank" {...tip("فتح العرض", `يفتح عرض ${p.client} بتبويب جديد مثل ما يشوفه العميل.`)} className="grid h-9 w-9 place-items-center rounded-full bg-orchid text-ink" aria-label="فتح العرض">
                     <Icon name="present" className="h-4 w-4" />
                   </a>
                 </li>
@@ -69,7 +74,7 @@ export default async function Overview() {
           <div className="card p-5 md:p-6">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-bold">آخر الرسائل</h2>
-              <Link href="/admin/messages" className="text-sm text-orchid hover:underline">الكل</Link>
+              <Link href="/admin/messages" {...tip("كل الرسائل", "يفتح صفحة الرسائل كاملة.")} className="text-sm text-orchid hover:underline">الكل</Link>
             </div>
             <ul className="space-y-2">
               {messages.slice(0, 4).map((m) => (

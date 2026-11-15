@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { saveKey } from "@/app/admin/actions";
 import { Icon } from "@/components/brand/Icon";
+import { tip } from "@/lib/tip";
 import type { EditorSchema } from "@/lib/schema";
 import { getSchema } from "@/lib/schema";
 import { pageOf } from "@/lib/pages";
@@ -26,7 +27,7 @@ export function Editor({ schemaKey, initial, options }: { schemaKey: ContentKey;
       const res = await saveKey(schemaKey, payload);
       if (res.ok) {
         setSaved(JSON.stringify(value));
-        setToast({ ok: true, msg: "تم الحفظ ونُشر على الموقع ✨" });
+        setToast({ ok: true, msg: "تم الحفظ ونُشر على الموقع" });
         router.refresh();
       } else setToast({ ok: false, msg: res.error ?? "صار خطأ" });
       setTimeout(() => setToast(null), 3200);
@@ -60,19 +61,21 @@ export function Editor({ schemaKey, initial, options }: { schemaKey: ContentKey;
         </div>
         <div className="flex items-center gap-2">
           {schema.anchor && (
-            <a href={`/ar${pageOf(schema.anchor as SectionKey) ? `/${pageOf(schema.anchor as SectionKey)}` : ""}#${schema.anchor}`} target="_blank" className="flex items-center gap-2 rounded-full border border-[var(--line)] px-4 py-2.5 text-sm text-lilac hover:border-orchid hover:text-white">
+            <a href={`/ar${pageOf(schema.anchor as SectionKey) ? `/${pageOf(schema.anchor as SectionKey)}` : ""}#${schema.anchor}`} target="_blank" {...tip("معاينة", "يفتح هذا القسم بالموقع بتبويب جديد حتى تشوف شلون يبين. التعديلات اللي ما حفظتها ما تطلع بالمعاينة.", "bottom")} className="flex items-center gap-2 rounded-full border border-[var(--line)] px-4 py-2.5 text-sm text-lilac hover:border-orchid hover:text-white">
               <Icon name="globe" className="h-4 w-4" /> معاينة
             </a>
           )}
           {dirty && (
-            <button onClick={() => setValue(JSON.parse(saved))} className="rounded-full px-4 py-2.5 text-sm text-lilac/70 hover:text-white">
+            <button {...tip("تراجع", "يلغي كل التعديلات اللي ما حفظتها ويرجّع الصفحة مثل ما كانت.", "bottom")} onClick={() => setValue(JSON.parse(saved))} className="rounded-full px-4 py-2.5 text-sm text-lilac/70 hover:text-white">
               تراجع
             </button>
           )}
+          <span {...tip(dirty ? "حفظ ونشر" : "كلشي محفوظ", dirty ? "يحفظ تعديلاتك ويطلعها على الموقع مباشرة. اختصار: ⌘S أو Ctrl+S." : "ما كو تعديلات جديدة. أول ما تغيّر أي شي، هذا الزر يتفعّل.", "bottom")}>
           <button onClick={save} disabled={!dirty || pending} className="btn btn-primary py-2.5! disabled:opacity-40 disabled:shadow-none">
             {pending ? "جاري الحفظ..." : dirty ? "حفظ ونشر" : "محفوظ"}
             <span className="arrow"><Icon name="check" className="h-4 w-4" strokeWidth={2.5} /></span>
           </button>
+          </span>
         </div>
       </header>
       <div className="card p-5 md:p-8">

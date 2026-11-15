@@ -17,6 +17,7 @@ const P: Record<string, React.ReactNode> = {
   close: <path d="M6 6l12 12M18 6 6 18" />,
   chevL: <path d="m15 5-7 7 7 7" />,
   chevR: <path d="m9 5 7 7-7 7" />,
+  chevD: <path d="m5 9 7 7 7-7" />,
   expand: <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />,
   present: <><rect x="3" y="4" width="18" height="12" rx="2" /><path d="M12 16v4M8 20h8" /></>,
   wand: <><path d="m4 20 11-11" /><path d="M16 3v3M19.5 4.5l-2 2M21 8h-3M14 8l2 2" /></>,

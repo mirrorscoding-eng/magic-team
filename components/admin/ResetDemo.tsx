@@ -2,6 +2,8 @@
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { resetDemo } from "@/app/admin/actions";
+import { confirmDialog } from "@/components/admin/ConfirmDialog";
+import { tip } from "@/lib/tip";
 
 export function ResetDemo() {
   const [pending, start] = useTransition();
@@ -9,8 +11,14 @@ export function ResetDemo() {
   return (
     <button
       disabled={pending}
-      onClick={() => {
-        if (!confirm("راح ترجع كل المحتوى للبيانات التجريبية الأصلية وتنمسح تعديلاتك. متأكد؟")) return;
+      {...tip("استرجاع البيانات التجريبية", "يمسح كل تعديلاتك ويرجّع المحتوى الأصلي. يسألك أول قبل ما يسوي أي شي، وما ينفع التراجع بعده.")}
+      onClick={async () => {
+        const ok = await confirmDialog({
+          title: "استرجاع البيانات التجريبية؟",
+          message: "راح يرجع كل المحتوى للبيانات التجريبية الأصلية وتنمسح كل تعديلاتك. ما تگدر تتراجع عن هالخطوة.",
+          confirmLabel: "استرجاع",
+        });
+        if (!ok) return;
         start(async () => {
           await resetDemo();
           router.refresh();

@@ -1,5 +1,6 @@
 import { deleteMessage, setMessageRead } from "@/app/admin/actions";
 import { Icon } from "@/components/brand/Icon";
+import { tip } from "@/lib/tip";
 import { requireAdmin } from "@/lib/auth";
 import { getMessages } from "@/lib/store";
 
@@ -22,8 +23,8 @@ export default async function Messages() {
                   {m.company && <span className="text-lilac/60">· {m.company}</span>}
                 </div>
                 <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-sm text-lilac/70">
-                  {m.phone && <a href={`tel:${m.phone}`} className="font-latin hover:text-white" dir="ltr">{m.phone}</a>}
-                  {m.email && <a href={`mailto:${m.email}`} className="font-latin hover:text-white">{m.email}</a>}
+                  {m.phone && <a {...tip("اتصال", "اضغط حتى تتصل بهذا الرقم.")} href={`tel:${m.phone}`} className="font-latin hover:text-white" dir="ltr">{m.phone}</a>}
+                  {m.email && <a {...tip("إرسال إيميل", "يفتح برنامج الإيميل برسالة جاهزة لهذا العنوان.")} href={`mailto:${m.email}`} className="font-latin hover:text-white">{m.email}</a>}
                   {m.service && <span className="pill-outline">{m.service}</span>}
                 </div>
                 {m.message && <p className="mt-3 whitespace-pre-wrap leading-7 text-white/90">{m.message}</p>}
@@ -31,10 +32,10 @@ export default async function Messages() {
               </div>
               <div className="flex gap-2">
                 <form action={setMessageRead.bind(null, m.id, !m.read)}>
-                  <button className="rounded-full border border-[var(--line)] px-3 py-2 text-xs hover:border-orchid">{m.read ? "تعليم كغير مقروء" : "تعليم كمقروء"}</button>
+                  <button {...tip(m.read ? "تعليم كغير مقروء" : "تعليم كمقروء", m.read ? "يرجّع الرسالة جديدة حتى تتذكر ترد عليها." : "يشيل علامة «جديد» وينقص عدّاد الرسائل.")} className="rounded-full border border-[var(--line)] px-3 py-2 text-xs hover:border-orchid">{m.read ? "تعليم كغير مقروء" : "تعليم كمقروء"}</button>
                 </form>
                 <form action={deleteMessage.bind(null, m.id)}>
-                  <button className="grid h-8 w-8 place-items-center rounded-full text-lilac/60 hover:bg-orchid/20 hover:text-orchid" aria-label="حذف"><Icon name="close" className="h-4 w-4" /></button>
+                  <button {...tip("حذف الرسالة", "يحذفها نهائياً.")} className="grid h-8 w-8 place-items-center rounded-full text-lilac/60 hover:bg-orchid/20 hover:text-orchid" aria-label="حذف"><Icon name="close" className="h-4 w-4" /></button>
                 </form>
               </div>
             </div>

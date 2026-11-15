@@ -1,6 +1,8 @@
 "use client";
 import { useRef, useState } from "react";
 import { Icon } from "@/components/brand/Icon";
+import { confirmDialog } from "@/components/admin/ConfirmDialog";
+import { tip } from "@/lib/tip";
 import { BRAND_COLORS, blank, type Field } from "@/lib/schema";
 import type { L } from "@/lib/types";
 import { VIDEO_LABEL, canAmbient, parseVideo, posterOf } from "@/lib/video";
@@ -16,8 +18,44 @@ type Obj = Record<string, unknown>;
 export const inputCls =
   "w-full rounded-xl border border-[var(--line)] bg-ink/60 px-3.5 py-2.5 text-sm text-white outline-none transition placeholder:text-lilac/30 focus:border-orchid focus:bg-ink";
 
+const SAVE_NOTE = "التعديل ما يطلع على الموقع إلا بعد ما تضغط «حفظ ونشر» فوق.";
+
+/** Plain-language "how do I use this" for each kind of field, shown on hover. */
+const TYPE_HELP: Record<Field["type"], string> = {
+  l: "اكتب النص بالعربي بالخانة اللي عليها «ع»، وبالإنكليزي بالخانة اللي عليها «EN». الموقع يعرض اللغة حسب الزائر.",
+  text: "اكتب القيمة مباشرة داخل الخانة.",
+  number: "اكتب رقم، أو استخدم الأسهم الصغيرة داخل الخانة حتى تزيد أو تنقص.",
+  range: "اسحب الدائرة يمين أو يسار. الرقم جنبها يوضح القيمة الحالية.",
+  bool: "اضغط على المفتاح حتى تشغّله أو تطفيه: الأخضر = شغّال، الرمادي = طافي.",
+  image: "اضغط «رفع صورة» واختار صورة من جهازك، أو اسحب الصورة وافلتها على المربع، أو الصق رابط صورة بالخانة.",
+  video: "اضغط «رفع فيديو» واختار ملف من جهازك، أو الصق رابط يوتيوب / فيميو / تيك توك / انستغرام بالخانة.",
+  select: "اضغط على الخانة واختار من القائمة.",
+  color: "اضغط على الدائرة باللون اللي تريده. اللون المختار يطلع حوله إطار أبيض.",
+  icon: "اضغط على الأيقونة المناسبة. الأيقونة المختارة تتلون بالوردي.",
+  multi: "اضغط على أي خيار عليه + حتى تضيفه. الترتيب يكون حسب ما تضيف، واضغط × على أي خيار حتى تشيله.",
+  group: "مجموعة خانات مرتبطة ببعض، عدّل اللي تحتاجه منها.",
+  list: "اضغط على اسم أي عنصر حتى تفتحه وتعدله. غيّر الترتيب بالسحب من ⋮⋮ أو بالأسهم، وزر «+ إضافة» بالأسفل يضيف عنصر جديد.",
+  lList: "كل خيار مكتوب بلغتين. «+ إضافة خيار» يضيف واحد جديد، وزر × يحذفه.",
+};
+
+const fieldTip = (f: Field) => tip(f.label, `${f.help ?? TYPE_HELP[f.type]} ${SAVE_NOTE}`);
+
 function Label({ children }: { children: React.ReactNode }) {
-  return <div className="mb-1.5 text-xs font-semibold text-lilac/70">{children}</div>;
+  return (
+    <div className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-lilac/70">
+      <span>{children}</span>
+      <HelpDot />
+    </div>
+  );
+}
+
+/** Small "?" that tells people hovering is worthwhile. */
+function HelpDot() {
+  return (
+    <span aria-hidden className="grid h-4 w-4 shrink-0 cursor-help place-items-center rounded-full border border-lilac/25 font-latin text-[9px] font-bold text-lilac/50">
+      ?
+    </span>
+  );
 }
 
 function LInput({ value, onChange, multiline }: { value: L; onChange: (v: L) => void; multiline?: boolean }) {
@@ -27,11 +65,11 @@ function LInput({ value, onChange, multiline }: { value: L; onChange: (v: L) => 
     <div className="grid gap-2 md:grid-cols-2">
       <div className="relative">
         <span className="pointer-events-none absolute end-3 top-2.5 text-[10px] font-bold text-orchid/70">ع</span>
-        <Tag className={`${inputCls} pe-8`} rows={3} value={v.ar} onChange={(e) => onChange({ ...v, ar: e.target.value })} dir="rtl" />
+        <Tag {...tip("النص بالعربي", "هذا اللي يشوفه الزائر لما يكون الموقع بالعربي.")} className={`${inputCls} pe-8`} rows={3} value={v.ar} onChange={(e) => onChange({ ...v, ar: e.target.value })} dir="rtl" />
       </div>
       <div className="relative">
         <span className="pointer-events-none absolute end-3 top-2.5 text-[10px] font-bold text-cyan/70" dir="ltr">EN</span>
-        <Tag className={`${inputCls} pe-10 font-latin`} rows={3} value={v.en} onChange={(e) => onChange({ ...v, en: e.target.value })} dir="ltr" />
+        <Tag {...tip("النص بالإنكليزي", "هذا اللي يشوفه الزائر لما يكون الموقع بالإنكليزي.")} className={`${inputCls} pe-10 font-latin`} rows={3} value={v.en} onChange={(e) => onChange({ ...v, en: e.target.value })} dir="ltr" />
       </div>
     </div>
   );
@@ -92,13 +130,13 @@ function ImageInput({ value, onChange }: { value: string; onChange: (v: string) 
         {value ? <img src={value} alt="" className="max-h-full max-w-full object-contain" /> : <Icon name="camera" className="h-6 w-6 text-lilac/30" />}
       </div>
       <div className="min-w-0 flex-1 space-y-2">
-        <input className={`${inputCls} py-2! font-latin text-xs!`} value={value ?? ""} onChange={(e) => onChange(e.target.value)} placeholder="رابط الصورة أو ارفع ملف" dir="ltr" />
+        <input className={`${inputCls} py-2! font-latin text-xs!`} value={value ?? ""} onChange={(e) => onChange(e.target.value)} placeholder="رابط الصورة أو ارفع ملف" dir="ltr" {...tip("رابط الصورة", "إذا الصورة موجودة على الإنترنت الصق رابطها هنا. إذا رفعت صورة، رابطها يطلع هنا تلقائياً.")} />
         <div className="flex items-center gap-2">
-          <button type="button" onClick={() => file.current?.click()} disabled={busy} className="rounded-lg bg-white/10 px-3 py-1.5 text-xs font-semibold hover:bg-white/15 disabled:opacity-50">
+          <button type="button" {...tip("رفع صورة", "يفتح ملفات جهازك حتى تختار صورة (JPG أو PNG أو SVG). تگدر هم تسحب الصورة وتفلتها على المربع.")} onClick={() => file.current?.click()} disabled={busy} className="rounded-lg bg-white/10 px-3 py-1.5 text-xs font-semibold hover:bg-white/15 disabled:opacity-50">
             {busy ? "جاري الرفع..." : "رفع صورة"}
           </button>
           {value && (
-            <button type="button" onClick={() => onChange("")} className="rounded-lg px-2 py-1.5 text-xs text-lilac/60 hover:text-orchid">
+            <button type="button" {...tip("إزالة", "يشيل الملف من هذي الخانة فقط، وما ينحذف من الموقع إلا بعد «حفظ ونشر».")} onClick={() => onChange("")} className="rounded-lg px-2 py-1.5 text-xs text-lilac/60 hover:text-orchid">
               إزالة
             </button>
           )}
@@ -144,13 +182,14 @@ function VideoInput({ value, onChange }: { value: string; onChange: (v: string) 
           onChange={(e) => onChange(e.target.value)}
           placeholder="https://youtube.com/watch?v=…  أو  tiktok / instagram / vimeo  أو ارفع ملف"
           dir="ltr"
+          {...tip("رابط الفيديو", "انسخ رابط الفيديو من يوتيوب أو فيميو أو تيك توك أو انستغرام والصقه هنا. إذا رفعت ملف، رابطه يطلع هنا تلقائياً.")}
         />
         <div className="flex flex-wrap items-center gap-2">
-          <button type="button" onClick={() => file.current?.click()} disabled={busy} className="rounded-lg bg-white/10 px-3 py-1.5 text-xs font-semibold hover:bg-white/15 disabled:opacity-50">
+          <button type="button" {...tip("رفع فيديو", "يفتح ملفات جهازك حتى تختار فيديو (mp4 أو mov أو webm). الفيديوهات الكبيرة تاخذ وقت، انتظر لحد ما يكمل الشريط الأخضر.")} onClick={() => file.current?.click()} disabled={busy} className="rounded-lg bg-white/10 px-3 py-1.5 text-xs font-semibold hover:bg-white/15 disabled:opacity-50">
             {busy ? `جاري الرفع ${pct ?? 0}%` : "رفع فيديو (mp4 / mov / webm)"}
           </button>
           {value && (
-            <button type="button" onClick={() => onChange("")} className="rounded-lg px-2 py-1.5 text-xs text-lilac/60 hover:text-orchid">
+            <button type="button" {...tip("إزالة", "يشيل الملف من هذي الخانة فقط، وما ينحذف من الموقع إلا بعد «حفظ ونشر».")} onClick={() => onChange("")} className="rounded-lg px-2 py-1.5 text-xs text-lilac/60 hover:text-orchid">
               إزالة
             </button>
           )}
@@ -179,7 +218,7 @@ function MultiInput({ value, onChange, options }: { value: string[]; onChange: (
         return (
           <span key={k} className="flex items-center gap-1 rounded-full bg-orchid py-1 ps-3 pe-1 text-xs font-bold text-ink">
             <span className="opacity-60">{i + 1}.</span> {o?.label ?? k}
-            <button type="button" onClick={() => toggle(k)} className="grid h-5 w-5 place-items-center rounded-full hover:bg-ink/15" aria-label="إزالة">
+            <button type="button" {...tip("إزالة", `يشيل «${o?.label ?? k}» من الاختيارات.`)} onClick={() => toggle(k)} className="grid h-5 w-5 place-items-center rounded-full hover:bg-ink/15" aria-label="إزالة">
               <Icon name="close" className="h-3 w-3" strokeWidth={3} />
             </button>
           </span>
@@ -188,7 +227,7 @@ function MultiInput({ value, onChange, options }: { value: string[]; onChange: (
       {options
         .filter((o) => !v.includes(o.value))
         .map((o) => (
-          <button key={o.value} type="button" onClick={() => toggle(o.value)} className="rounded-full border border-dashed border-[var(--line)] px-3 py-1 text-xs text-lilac/70 hover:border-orchid hover:text-white">
+          <button key={o.value} type="button" {...tip(`إضافة «${o.label}»`, "يضيفه آخر القائمة المختارة.")} onClick={() => toggle(o.value)} className="rounded-full border border-dashed border-[var(--line)] px-3 py-1 text-xs text-lilac/70 hover:border-orchid hover:text-white">
             + {o.label}
           </button>
         ))}
@@ -216,6 +255,7 @@ function ListInput({ field, value, onChange, options }: { field: Extract<Field, 
     onChange(next);
   };
   const isOpen = (i: number) => open === -1 || open === i;
+  const full = field.max !== undefined && list.length >= field.max;
   return (
     <div className="space-y-2">
       {list.map((item, i) => (
@@ -231,27 +271,32 @@ function ListInput({ field, value, onChange, options }: { field: Extract<Field, 
           className={`rounded-2xl border bg-white/[.02] transition ${drag === i ? "border-orchid opacity-50" : "border-[var(--line)]"}`}
         >
           <div className="flex items-center gap-2 px-3 py-2.5">
-            <span className="cursor-grab select-none px-1 text-lilac/40" title="اسحب لإعادة الترتيب">⋮⋮</span>
-            <button type="button" onClick={() => setOpen(isOpen(i) ? null : i)} className="flex min-w-0 flex-1 items-center gap-2 text-start">
+            <span className="cursor-grab select-none px-1 text-lilac/40" {...tip("سحب لإعادة الترتيب", "اضغط هنا وخلّي الماوس مضغوط، واسحب العنصر فوق أو جوّه وافلته بمكانه الجديد.")}>⋮⋮</span>
+            <button type="button" {...tip(isOpen(i) ? "إغلاق العنصر" : "فتح العنصر", isOpen(i) ? "يطوي الخانات حتى تصير القائمة أرتب." : "يفتح خانات هذا العنصر حتى تعدّلها.")} onClick={() => setOpen(isOpen(i) ? null : i)} className="flex min-w-0 flex-1 items-center gap-2 text-start">
               <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-white/10 font-latin text-[11px] font-bold">{i + 1}</span>
               <span className="truncate text-sm font-semibold">{itemTitle(item, field.titleKey) || "عنصر جديد"}</span>
               <Icon name="chevL" className={`ms-auto h-4 w-4 text-lilac/50 transition ${isOpen(i) ? "-rotate-90" : ""}`} />
             </button>
             <div className="flex items-center">
-              <button type="button" title="لأعلى" onClick={() => move(i, i - 1)} className="rounded-lg p-1.5 text-lilac/60 hover:bg-white/10 hover:text-white disabled:opacity-20" disabled={i === 0}>
+              <button type="button" {...tip("تحريك لفوق", "ينقل العنصر خطوة وحدة لفوق. الترتيب هنا هو نفس ترتيبه بالموقع.")} onClick={() => move(i, i - 1)} className="rounded-lg p-1.5 text-lilac/60 hover:bg-white/10 hover:text-white disabled:opacity-20" disabled={i === 0}>
                 <Icon name="chevR" className="h-4 w-4 -rotate-90" />
               </button>
-              <button type="button" title="لأسفل" onClick={() => move(i, i + 1)} className="rounded-lg p-1.5 text-lilac/60 hover:bg-white/10 hover:text-white disabled:opacity-20" disabled={i === list.length - 1}>
+              <button type="button" {...tip("تحريك لجوّه", "ينقل العنصر خطوة وحدة لجوّه. الترتيب هنا هو نفس ترتيبه بالموقع.")} onClick={() => move(i, i + 1)} className="rounded-lg p-1.5 text-lilac/60 hover:bg-white/10 hover:text-white disabled:opacity-20" disabled={i === list.length - 1}>
                 <Icon name="chevR" className="h-4 w-4 rotate-90" />
               </button>
-              <button type="button" title="نسخ" onClick={() => onChange([...list.slice(0, i + 1), structuredClone(item), ...list.slice(i + 1)])} className="rounded-lg p-1.5 text-lilac/60 hover:bg-white/10 hover:text-white">
+              <button type="button" {...tip("نسخ العنصر", full ? "وصلت للحد الأعلى، احذف عنصر حتى تگدر تنسخ." : "يسوي نسخة طبق الأصل تحته، حتى تعدّل عليها بدل ما تبدي من الصفر.")} disabled={full} onClick={() => onChange([...list.slice(0, i + 1), structuredClone(item), ...list.slice(i + 1)])} className="rounded-lg p-1.5 text-lilac/60 hover:bg-white/10 hover:text-white disabled:opacity-20">
                 <Icon name="grid" className="h-4 w-4" />
               </button>
               <button
                 type="button"
-                title="حذف"
-                onClick={() => {
-                  if (confirm("حذف هذا العنصر؟")) onChange(list.filter((_, j) => j !== i));
+                {...tip("حذف العنصر", "يسألك أول قبل ما يحذف. الحذف ما يتثبت بالموقع إلا بعد «حفظ ونشر».")}
+                onClick={async () => {
+                  const name = itemTitle(item, field.titleKey);
+                  const ok = await confirmDialog({
+                    title: name ? `حذف «${name}»؟` : "حذف هذا العنصر؟",
+                    message: "راح ينشال من القائمة. التغيير ما يتثبت بالموقع إلا بعد «حفظ ونشر».",
+                  });
+                  if (ok) onChange(list.filter((_, j) => j !== i));
                 }}
                 className="rounded-lg p-1.5 text-lilac/60 hover:bg-orchid/20 hover:text-orchid"
               >
@@ -266,16 +311,21 @@ function ListInput({ field, value, onChange, options }: { field: Extract<Field, 
           )}
         </div>
       ))}
-      <button
-        type="button"
-        onClick={() => {
-          onChange([...list, blank(field.item)]);
-          setOpen(list.length);
-        }}
-        className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-[var(--line)] py-3 text-sm font-semibold text-lilac/70 transition hover:border-orchid hover:text-white"
-      >
-        + {field.addLabel ?? "إضافة"}
-      </button>
+      {full ? (
+        <p {...tip("وصلت للحد الأعلى", "هذي القائمة بيها عدد محدود حتى يبقى الموقع مرتب.")} className="rounded-2xl border border-dashed border-[var(--line)] py-3 text-center text-sm text-lilac/50">وصلت للحد الأعلى ({field.max}) — احذف وحدة حتى تضيف غيرها</p>
+      ) : (
+        <button
+          type="button"
+          {...tip(field.addLabel ?? "إضافة", "يضيف عنصر جديد فارغ آخر القائمة ويفتحه حتى تعبّيه.")}
+          onClick={() => {
+            onChange([...list, blank(field.item)]);
+            setOpen(list.length);
+          }}
+          className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-[var(--line)] py-3 text-sm font-semibold text-lilac/70 transition hover:border-orchid hover:text-white"
+        >
+          + {field.addLabel ?? "إضافة"}
+        </button>
+      )}
     </div>
   );
 }
@@ -318,7 +368,7 @@ function FieldInput({ field, value, onChange, options }: { field: Field; value: 
     }
     case "bool":
       return (
-        <button type="button" role="switch" aria-checked={!!value} onClick={() => onChange(!value)} className={`relative h-7 w-12 rounded-full transition ${value ? "bg-green" : "bg-white/15"}`}>
+        <button type="button" role="switch" aria-checked={!!value} {...tip(value ? "شغّال حالياً" : "طافي حالياً", value ? "اضغط حتى تطفيه." : "اضغط حتى تشغّله.")} onClick={() => onChange(!value)} className={`relative h-7 w-12 rounded-full transition ${value ? "bg-green" : "bg-white/15"}`}>
           <span className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow transition-all ${value ? "start-6 bg-ink!" : "start-1"}`} />
         </button>
       );
@@ -345,7 +395,7 @@ function FieldInput({ field, value, onChange, options }: { field: Field; value: 
       return (
         <div className="flex flex-wrap gap-2">
           {BRAND_COLORS.map((c) => (
-            <button key={c.value} type="button" title={c.label} onClick={() => onChange(c.value)} className={`h-9 w-9 rounded-full ring-offset-2 ring-offset-ink transition ${value === c.value ? "ring-2 ring-white scale-110" : "hover:scale-105"}`} style={{ background: c.hex }} aria-label={c.label} />
+            <button key={c.value} type="button" {...tip(`اللون ${c.label}`, value === c.value ? "هذا اللون المختار حالياً." : "اضغط حتى تختار هذا اللون.")} onClick={() => onChange(c.value)} className={`h-9 w-9 rounded-full ring-offset-2 ring-offset-ink transition ${value === c.value ? "ring-2 ring-white scale-110" : "hover:scale-105"}`} style={{ background: c.hex }} aria-label={c.label} />
           ))}
         </div>
       );
@@ -353,7 +403,7 @@ function FieldInput({ field, value, onChange, options }: { field: Field; value: 
       return (
         <div className="flex flex-wrap gap-1.5">
           {field.icons.map((ic) => (
-            <button key={ic} type="button" onClick={() => onChange(ic)} className={`grid h-10 w-10 place-items-center rounded-xl border transition ${value === ic ? "border-orchid bg-orchid text-ink" : "border-[var(--line)] text-lilac/70 hover:text-white"}`} aria-label={ic}>
+            <button key={ic} type="button" {...tip(value === ic ? "الأيقونة المختارة" : "اختيار هذي الأيقونة", "الأيقونة تطلع جنب العنوان بالموقع.")} onClick={() => onChange(ic)} className={`grid h-10 w-10 place-items-center rounded-xl border transition ${value === ic ? "border-orchid bg-orchid text-ink" : "border-[var(--line)] text-lilac/70 hover:text-white"}`} aria-label={ic}>
               <Icon name={ic} />
             </button>
           ))}
@@ -378,12 +428,12 @@ function FieldInput({ field, value, onChange, options }: { field: Field; value: 
               <div className="flex-1">
                 <LInput value={v} onChange={(nv) => onChange(list.map((x, j) => (j === i ? nv : x)))} />
               </div>
-              <button type="button" onClick={() => onChange(list.filter((_, j) => j !== i))} className="mt-1.5 rounded-lg p-2 text-lilac/60 hover:bg-orchid/20 hover:text-orchid" aria-label="حذف">
+              <button type="button" {...tip("حذف الخيار", "يشيل هذا الخيار من القائمة.")} onClick={() => onChange(list.filter((_, j) => j !== i))} className="mt-1.5 rounded-lg p-2 text-lilac/60 hover:bg-orchid/20 hover:text-orchid" aria-label="حذف">
                 <Icon name="close" className="h-4 w-4" />
               </button>
             </div>
           ))}
-          <button type="button" onClick={() => onChange([...list, { ar: "", en: "" }])} className="rounded-xl border border-dashed border-[var(--line)] px-4 py-2 text-sm text-lilac/70 hover:border-orchid hover:text-white">
+          <button type="button" {...tip("إضافة خيار", "يضيف خانة جديدة للخيار بالعربي والإنكليزي.")} onClick={() => onChange([...list, { ar: "", en: "" }])} className="rounded-xl border border-dashed border-[var(--line)] px-4 py-2 text-sm text-lilac/70 hover:border-orchid hover:text-white">
             + إضافة خيار
           </button>
         </div>
@@ -397,11 +447,12 @@ export function Fields({ fields, value, onChange, options }: { fields: Field[]; 
   return (
     <div className="grid gap-5 md:grid-cols-2">
       {fields.map((f) => (
-        <div key={f.key} className={wide(f) ? "md:col-span-2" : ""}>
+        <div key={f.key} className={wide(f) ? "md:col-span-2" : ""} {...(f.type === "group" || f.type === "list" ? {} : fieldTip(f))}>
           {f.type === "group" || f.type === "list" ? (
-            <div className="mb-2 flex items-center gap-2 text-sm font-bold text-white">
+            <div className="mb-2 flex w-fit items-center gap-2 text-sm font-bold text-white" {...fieldTip(f)}>
               <span className="h-4 w-1 rounded-full bg-orchid" />
               {f.label}
+              <HelpDot />
             </div>
           ) : (
             <Label>{f.label}</Label>
