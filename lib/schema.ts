@@ -4,6 +4,7 @@ export type Field =
   | { type: "l"; key: string; label: string; multiline?: boolean }
   | { type: "text"; key: string; label: string; ltr?: boolean; placeholder?: string }
   | { type: "number"; key: string; label: string; step?: number }
+  | { type: "range"; key: string; label: string; min: number; max: number; step?: number; ends?: [string, string]; unit?: string }
   | { type: "bool"; key: string; label: string }
   | { type: "image"; key: string; label: string }
   | { type: "video"; key: string; label: string }
@@ -368,6 +369,18 @@ export const SCHEMAS: EditorSchema[] = [
       { type: "text", key: "tiktok", label: "رابط تيك توك", ltr: true },
       { type: "text", key: "linkedin", label: "رابط لينكدإن", ltr: true },
       { type: "l", key: "notice", label: "شارة الملاحظة أسفل الموقع (اتركها فارغة لإخفائها)" },
+      {
+        type: "group",
+        key: "wave",
+        label: "خلفية الأمواج (الخطوط اللي تتحرك ويه المؤشر)",
+        fields: [
+          { type: "bool", key: "enabled", label: "تشغيل الأمواج" },
+          { type: "range", key: "strength", label: "قوة تفاعلها ويه المؤشر", min: 0, max: 100, ends: ["بدون تفاعل", "قوية"] },
+          { type: "range", key: "visibility", label: "وضوح الخطوط", min: 10, max: 100, ends: ["خفيفة", "واضحة"] },
+          { type: "range", key: "speed", label: "سرعة حركة الموج", min: 0, max: 100, ends: ["ثابتة", "سريعة"] },
+          { type: "range", key: "spacing", label: "المسافة بين الخطوط", min: 20, max: 70, ends: ["كثيفة", "متباعدة"], unit: "px" },
+        ],
+      },
     ],
   },
 ];
@@ -384,6 +397,9 @@ export function blank(fields: Field[]): Record<string, unknown> {
         break;
       case "number":
         o[f.key] = 0;
+        break;
+      case "range":
+        o[f.key] = Math.round((f.min + f.max) / 2);
         break;
       case "bool":
         o[f.key] = false;

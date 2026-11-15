@@ -33,6 +33,16 @@ export type Settings = {
   linkedin: string;
   notice: L;
   sections: { key: SectionKey; visible: boolean }[];
+  wave: WaveSettings;
+};
+
+/** The cursor-reactive line waves behind the website. Sliders are 0–100 with 50 as the designed default. */
+export type WaveSettings = {
+  enabled: boolean;
+  strength: number; // how hard the cursor pushes the lines
+  visibility: number; // how bright the lines are
+  speed: number; // how fast the sea rolls by itself
+  spacing: number; // px between lines
 };
 
 export type Hero = {

@@ -16,7 +16,7 @@ export default async function SiteLayout({ children, params }: LayoutProps<"/[lo
   return (
     <>
       <SmoothScroll />
-      <WaveField />
+      <WaveField settings={settings.wave} />
       <Nav locale={locale} pages={pages.map(({ slug, label }) => ({ slug, label }))} />
       {children}
       <Footer locale={locale} settings={settings} pages={pages} />

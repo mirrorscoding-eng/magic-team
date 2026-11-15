@@ -288,6 +288,34 @@ function FieldInput({ field, value, onChange, options }: { field: Field; value: 
       return <input className={`${inputCls} ${field.ltr ? "font-latin" : ""}`} dir={field.ltr ? "ltr" : undefined} value={(value as string) ?? ""} onChange={(e) => onChange(e.target.value)} placeholder={field.placeholder} />;
     case "number":
       return <input type="number" step={field.step ?? 1} className={`${inputCls} font-latin`} dir="ltr" value={Number.isFinite(value as number) ? (value as number) : 0} onChange={(e) => onChange(e.target.value === "" ? 0 : Number(e.target.value))} />;
+    case "range": {
+      const v = Number.isFinite(value as number) ? (value as number) : Math.round((field.min + field.max) / 2);
+      return (
+        <div className="rounded-xl border border-[var(--line)] bg-white/[.03] px-4 py-3">
+          <div className="flex items-center gap-4">
+            <input
+              type="range"
+              min={field.min}
+              max={field.max}
+              step={field.step ?? 1}
+              value={v}
+              onChange={(e) => onChange(Number(e.target.value))}
+              className="h-2 flex-1 cursor-pointer accent-[var(--orchid)]"
+            />
+            <span className="font-latin w-14 text-end text-sm font-semibold tabular-nums text-white" dir="ltr">
+              {v}
+              {field.unit ?? ""}
+            </span>
+          </div>
+          {field.ends && (
+            <div className="mt-1 flex justify-between pe-[4.5rem] text-xs text-lilac/50">
+              <span>{field.ends[0]}</span>
+              <span>{field.ends[1]}</span>
+            </div>
+          )}
+        </div>
+      );
+    }
     case "bool":
       return (
         <button type="button" role="switch" aria-checked={!!value} onClick={() => onChange(!value)} className={`relative h-7 w-12 rounded-full transition ${value ? "bg-green" : "bg-white/15"}`}>

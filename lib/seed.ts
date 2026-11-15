@@ -452,6 +452,7 @@ export const seed: Content = {
     tiktok: "https://tiktok.com/",
     linkedin: "https://linkedin.com/",
     notice: { ar: "نسخة تصميم أولية · المحتوى والأرقام تجريبية", en: "Design preview · content and numbers are sample data" },
+    wave: { enabled: true, strength: 50, visibility: 50, speed: 50, spacing: 34 },
     sections: [
       { key: "hero", visible: true },
       { key: "clients", visible: true },
