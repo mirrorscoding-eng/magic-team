@@ -41,6 +41,7 @@ yarn-error.log*
 next-env.d.ts
 data/content.json
 data/messages.json
+data/documents.json
 data/uploads/*
 !data/uploads/.gitkeep
 .env.local

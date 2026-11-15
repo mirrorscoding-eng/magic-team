@@ -13,6 +13,9 @@ import { SCHEMAS } from "@/lib/schema";
 const PAGE_HELP: Record<string, string> = {
   "/admin": "الصفحة الرئيسية للوحة: أرقام سريعة، ترتيب أقسام الموقع، وآخر الرسائل.",
   "/admin/messages": "الطلبات اللي يرسلها الزوار من نموذج التواصل بالموقع.",
+  "/admin/quotes": "سوّي عروض أسعار بتصميم ماجك ونزّلها PDF جاهزة للعميل.",
+  "/admin/invoices": "فواتير بتصميم رسمي وختم الحالة، وتگدر تحوّل أي عرض سعر لفاتورة.",
+  "/admin/plans": "خطط واستراتيجيات تسويقية بشكل مجلة، تنزل PDF بغلاف وأقسام مرقمة.",
   ...Object.fromEntries(SCHEMAS.map((s) => [`/admin/${s.key}`, s.description])),
 };
 
@@ -33,6 +36,15 @@ const GROUPS: { key: string; title: string; items: { href: string; label: string
       { href: "/admin/manifesto", label: "البيان", icon: "bolt" },
       { href: "/admin/services", label: "الخدمات", icon: "target" },
       { href: "/admin/contact", label: "التواصل", icon: "mail" },
+    ],
+  },
+  {
+    key: "tools",
+    title: "أدوات ماجك",
+    items: [
+      { href: "/admin/quotes", label: "عروض الأسعار", icon: "tag" },
+      { href: "/admin/invoices", label: "الفواتير", icon: "receipt" },
+      { href: "/admin/plans", label: "الخطط التسويقية", icon: "chart" },
     ],
   },
   {

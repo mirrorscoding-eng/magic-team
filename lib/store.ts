@@ -3,6 +3,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { seed } from "./seed";
 import { SECTION_KEYS, type Content, type ContentKey, type Message } from "./types";
+import { DOC_PREFIX, type Doc, type DocType } from "./docs";
 
 /**
  * File-based content store (data/content.json).
@@ -78,4 +79,37 @@ export async function addMessage(msg: Omit<Message, "id" | "createdAt" | "read">
 export async function updateMessages(fn: (list: Message[]) => Message[]) {
   const list = await readJson<Message[]>(MESSAGES_FILE, []);
   await writeJson(MESSAGES_FILE, fn(list));
+}
+
+/* ---------- Business documents (quotes, invoices, marketing plans) ---------- */
+const DOCS_FILE = path.join(DATA_DIR, "documents.json");
+
+export async function getDocs(type?: DocType): Promise<Doc[]> {
+  const list = await readJson<Doc[]>(DOCS_FILE, []);
+  return list.filter((d) => !type || d.type === type).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+export async function getDoc(id: string): Promise<Doc | undefined> {
+  return (await readJson<Doc[]>(DOCS_FILE, [])).find((d) => d.id === id);
+}
+
+/** Next free number for this type and year, e.g. INV-2026-007. */
+export async function nextDocNumber(type: DocType) {
+  const year = new Date().getFullYear();
+  const prefix = `${DOC_PREFIX[type]}-${year}-`;
+  const used = (await getDocs(type)).map((d) => (d.number.startsWith(prefix) ? Number(d.number.slice(prefix.length)) || 0 : 0));
+  return `${prefix}${String(Math.max(0, ...used) + 1).padStart(3, "0")}`;
+}
+
+export async function putDoc(doc: Doc) {
+  const list = await readJson<Doc[]>(DOCS_FILE, []);
+  const at = list.findIndex((d) => d.id === doc.id);
+  if (at >= 0) list[at] = doc;
+  else list.push(doc);
+  await writeJson(DOCS_FILE, list);
+}
+
+export async function removeDoc(id: string) {
+  const list = await readJson<Doc[]>(DOCS_FILE, []);
+  await writeJson(DOCS_FILE, list.filter((d) => d.id !== id));
 }

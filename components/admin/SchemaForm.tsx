@@ -112,7 +112,7 @@ function useUpload(onChange: (v: string) => void) {
   return { busy: pct !== null, pct, err, upload };
 }
 
-function ImageInput({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+export function ImageInput({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const { busy, err, upload } = useUpload(onChange);
   const file = useRef<HTMLInputElement>(null);
   return (

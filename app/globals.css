@@ -494,3 +494,13 @@ html[dir="rtl"] .story-progress > i { transform-origin: right; }
 @media (prefers-reduced-motion: reduce) {
   .gallery-tile, .gallery-lightbox, .gallery-zoom { animation: none; }
 }
+
+/* ---------- Dashboard documents: Ctrl/⌘+P prints just the A4 pages ---------- */
+@media print {
+  @page { size: A4; margin: 0; }
+  html, body { background: #fff !important; }
+  body * { visibility: hidden; }
+  .doc-sheet, .doc-sheet * { visibility: visible; }
+  .doc-sheet { position: fixed !important; inset: 0 auto auto 0 !important; transform: none !important; gap: 0 !important; }
+  .doc-sheet > .doc-page { break-after: page; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+}
