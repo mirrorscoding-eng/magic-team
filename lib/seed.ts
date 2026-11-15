@@ -224,8 +224,8 @@ const cases: CaseStudy[] = [
         "en": "The execution"
       },
       "body": {
-        "ar": "صممنا واجهة الفرع، منيو كامل بـ ١٤ صفحة، وتصاميم سوشيال للبرگر والدجاج.",
-        "en": "We designed the storefront, a full 14-page menu, and social posts for the burgers and chicken."
+        "ar": "صوّرنا جلسة أكل وموديل كاملة، وصممنا واجهة الفرع، منيو كامل بـ ١٤ صفحة، وتصاميم سوشيال للبرگر والدجاج.",
+        "en": "We ran a full food & model photo shoot, designed the storefront, a full 14-page menu, and social posts for the burgers and chicken."
       },
       "image": "/work/brand/viking-6.jpg"
     },
@@ -481,15 +481,15 @@ export const seed: Content = {
     cards: [
       {
         "image": "/work/photo/shoot-09.jpg",
-        "alt": "Magic Team food shoot — burger and fries"
+        "alt": "Viking Burger food shoot by Magic Team — burger and fries"
       },
       {
         "image": "/work/photo/shoot-02.jpg",
-        "alt": "Magic Team food shoot — sandwich close-up"
+        "alt": "Viking Burger food shoot by Magic Team — sandwich close-up"
       },
       {
         "image": "/work/photo/shoot-11.jpg",
-        "alt": "Magic Team food shoot — ice cream"
+        "alt": "Viking Burger food shoot by Magic Team — ice cream"
       }
     ],
   },
@@ -639,153 +639,12 @@ export const seed: Content = {
         "logo": "/clients/viking-burger.png",
         "color": "yellow",
         "title": {
-          "ar": "تصاميم سوشيال وواجهة الفرع",
-          "en": "Social design & storefront"
+          "ar": "جلسة تصوير، سوشيال وواجهة الفرع",
+          "en": "Photo shoot, social & storefront"
         },
         "summary": {
-          "ar": "محتوى سوشيال جريء وواجهة فرع تحچي بنفس لغة فايكنگ.",
-          "en": "Bold social content and a storefront that speaks Viking's language."
-        },
-        "cover": "/work/brand/viking-1.jpg",
-        "items": [
-          {
-            "title": {
-              "ar": "تصميم واجهة الفرع",
-              "en": "Storefront visual"
-            },
-            "category": "design",
-            "image": "/work/brand/viking-1.jpg"
-          },
-          {
-            "title": {
-              "ar": "تصميم سوشيال ميديا",
-              "en": "Social media design"
-            },
-            "category": "design",
-            "image": "/work/brand/viking-2.jpg"
-          },
-          {
-            "title": {
-              "ar": "إعلان الآيس كريم",
-              "en": "Ice cream launch post"
-            },
-            "category": "design",
-            "image": "/work/brand/viking-11.jpg"
-          },
-          {
-            "title": {
-              "ar": "تصميم سوشيال ميديا",
-              "en": "Social media design"
-            },
-            "category": "design",
-            "image": "/work/brand/viking-6.jpg"
-          },
-          {
-            "title": {
-              "ar": "منيو الآيس كريم",
-              "en": "Ice cream menu"
-            },
-            "category": "design",
-            "image": "/work/brand/viking-12.jpg"
-          }
-        ]
-      },
-      {
-        "slug": "chicken-rays",
-        "client": "Chicken Ray's",
-        "logo": "/clients/chicken-rays.png",
-        "color": "green",
-        "title": {
-          "ar": "ريل ناشفيل هوت تشكن",
-          "en": "Nashville Hot Chicken reel"
-        },
-        "summary": {
-          "ar": "تصوير ومونتاج ريل يخلي الواحد يجوع من أول ثانية.",
-          "en": "A shot-and-cut reel that makes you hungry from the first second."
-        },
-        "cover": "/work/reel-poster.jpg",
-        "items": [
-          {
-            "title": {
-              "ar": "ريل ناشفيل هوت تشكن",
-              "en": "Nashville Hot Chicken reel"
-            },
-            "category": "video",
-            "image": "/work/reel-poster.jpg",
-            "video": "/work/reel.mp4"
-          }
-        ]
-      },
-      {
-        "slug": "hamish-roastery",
-        "client": "Hamish Roastery",
-        "logo": "/clients/hamish-roastery.png",
-        "color": "lilac",
-        "title": {
-          "ar": "شعار وهوية محمصة",
-          "en": "Roastery logo & identity"
-        },
-        "summary": {
-          "ar": "شعار وهوية بلونين لمحمصة حامش.",
-          "en": "A two-colour logo and identity for Hamish Roastery."
-        },
-        "cover": "/work/brand/hamish-red.jpg",
-        "items": [
-          {
-            "title": {
-              "ar": "شعار وهوية",
-              "en": "Logo & identity"
-            },
-            "category": "branding",
-            "image": "/work/brand/hamish-red.jpg"
-          },
-          {
-            "title": {
-              "ar": "ألوان الهوية",
-              "en": "Identity colourways"
-            },
-            "category": "branding",
-            "image": "/work/brand/hamish-green.jpg"
-          }
-        ]
-      },
-      {
-        "slug": "west-burger",
-        "client": "West Burger",
-        "logo": "/clients/west-burger.png",
-        "color": "cyan",
-        "title": {
-          "ar": "شعار وهوية برگر",
-          "en": "Burger logo & identity"
-        },
-        "summary": {
-          "ar": "هوية بصرية لـ West Burger.",
-          "en": "A visual identity for West Burger."
-        },
-        "cover": "/work/brand/west-burger.jpg",
-        "items": [
-          {
-            "title": {
-              "ar": "شعار",
-              "en": "Logo design"
-            },
-            "category": "branding",
-            "image": "/work/brand/west-burger.jpg"
-          }
-        ]
-      },
-      {
-        "slug": "photo-shoots",
-        "client": "",
-        "logo": "",
-        "color": "yellow",
-        "title": {
-          "ar": "جلسات تصوير منتجات",
-          "en": "Product photo shoots"
-        },
-        "summary": {
-          "ar": "تصوير أكل ومنتجات وموديل بإضاءة وستايل يناسب كل علامة.",
-          "en": "Food, product and model photography, lit and styled for each brand."
+          "ar": "جلسة تصوير أكل وموديل، محتوى سوشيال جريء، وواجهة فرع تحچي بنفس لغة فايكنگ.",
+          "en": "A food & model photo shoot, bold social content and a storefront that speaks Viking's language."
         },
         "cover": "/work/photo/shoot-09.jpg",
         "items": [
@@ -916,6 +775,130 @@ export const seed: Content = {
             },
             "category": "photo",
             "image": "/work/photo/shoot-04.jpg"
+          },
+          {
+            "title": {
+              "ar": "تصميم واجهة الفرع",
+              "en": "Storefront visual"
+            },
+            "category": "design",
+            "image": "/work/brand/viking-1.jpg"
+          },
+          {
+            "title": {
+              "ar": "تصميم سوشيال ميديا",
+              "en": "Social media design"
+            },
+            "category": "design",
+            "image": "/work/brand/viking-2.jpg"
+          },
+          {
+            "title": {
+              "ar": "إعلان الآيس كريم",
+              "en": "Ice cream launch post"
+            },
+            "category": "design",
+            "image": "/work/brand/viking-11.jpg"
+          },
+          {
+            "title": {
+              "ar": "تصميم سوشيال ميديا",
+              "en": "Social media design"
+            },
+            "category": "design",
+            "image": "/work/brand/viking-6.jpg"
+          },
+          {
+            "title": {
+              "ar": "منيو الآيس كريم",
+              "en": "Ice cream menu"
+            },
+            "category": "design",
+            "image": "/work/brand/viking-12.jpg"
+          }
+        ]
+      },
+      {
+        "slug": "chicken-rays",
+        "client": "Chicken Ray's",
+        "logo": "/clients/chicken-rays.png",
+        "color": "green",
+        "title": {
+          "ar": "ريل ناشفيل هوت تشكن",
+          "en": "Nashville Hot Chicken reel"
+        },
+        "summary": {
+          "ar": "تصوير ومونتاج ريل يخلي الواحد يجوع من أول ثانية.",
+          "en": "A shot-and-cut reel that makes you hungry from the first second."
+        },
+        "cover": "/work/reel-poster.jpg",
+        "items": [
+          {
+            "title": {
+              "ar": "ريل ناشفيل هوت تشكن",
+              "en": "Nashville Hot Chicken reel"
+            },
+            "category": "video",
+            "image": "/work/reel-poster.jpg",
+            "video": "/work/reel.mp4"
+          }
+        ]
+      },
+      {
+        "slug": "hamish-roastery",
+        "client": "Hamish Roastery",
+        "logo": "/clients/hamish-roastery.png",
+        "color": "lilac",
+        "title": {
+          "ar": "شعار وهوية محمصة",
+          "en": "Roastery logo & identity"
+        },
+        "summary": {
+          "ar": "شعار وهوية بلونين لمحمصة حامش.",
+          "en": "A two-colour logo and identity for Hamish Roastery."
+        },
+        "cover": "/work/brand/hamish-red.jpg",
+        "items": [
+          {
+            "title": {
+              "ar": "شعار وهوية",
+              "en": "Logo & identity"
+            },
+            "category": "branding",
+            "image": "/work/brand/hamish-red.jpg"
+          },
+          {
+            "title": {
+              "ar": "ألوان الهوية",
+              "en": "Identity colourways"
+            },
+            "category": "branding",
+            "image": "/work/brand/hamish-green.jpg"
+          }
+        ]
+      },
+      {
+        "slug": "west-burger",
+        "client": "West Burger",
+        "logo": "/clients/west-burger.png",
+        "color": "cyan",
+        "title": {
+          "ar": "شعار وهوية برگر",
+          "en": "Burger logo & identity"
+        },
+        "summary": {
+          "ar": "هوية بصرية لـ West Burger.",
+          "en": "A visual identity for West Burger."
+        },
+        "cover": "/work/brand/west-burger.jpg",
+        "items": [
+          {
+            "title": {
+              "ar": "شعار",
+              "en": "Logo design"
+            },
+            "category": "branding",
+            "image": "/work/brand/west-burger.jpg"
           }
         ]
       }
