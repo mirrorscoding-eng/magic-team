@@ -307,6 +307,17 @@ html[dir="rtl"] .marquee-track { animation-name: marquee-rtl; }
   max-height: 4.5rem;
   object-fit: contain;
 }
+.logo-word {
+  max-width: 100%;
+  text-align: center;
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: 0.04em;
+  color: var(--color-lilac, #e9d5ff);
+  opacity: 0.85;
+  overflow-wrap: anywhere;
+}
 .logo-tile:hover { transform: scale(1.08); }
 
 

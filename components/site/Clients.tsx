@@ -1,16 +1,31 @@
 "use client";
+import { useState } from "react";
 import type { Clients as ClientsT, Locale } from "@/lib/types";
 import { SectionHead } from "./SectionHead";
 import { Reveal } from "./shown";
+
+/** A client logo, or the brand name set as a wordmark when no logo was uploaded or it fails to load. */
+function LogoTile({ name, logo, hidden }: { name: string; logo: string; hidden?: boolean }) {
+  const [broken, setBroken] = useState(false);
+  return (
+    <li className="logo-tile" title={name}>
+      {logo && !broken ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={logo} alt={hidden ? "" : name} loading="lazy" onError={() => setBroken(true)} />
+      ) : (
+        <span className="logo-word font-display" dir="auto">
+          {name}
+        </span>
+      )}
+    </li>
+  );
+}
 
 function Row({ logos, reverse, speed }: { logos: ClientsT["logos"]; reverse?: boolean; speed: string }) {
   const track = (hidden?: boolean) => (
     <ul className="marquee-track" aria-hidden={hidden}>
       {logos.map((l, i) => (
-        <li key={i} className="logo-tile" title={l.name}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={l.logo} alt={hidden ? "" : l.name} loading="lazy" />
-        </li>
+        <LogoTile key={i} name={l.name} logo={l.logo?.trim() ?? ""} hidden={hidden} />
       ))}
     </ul>
   );
