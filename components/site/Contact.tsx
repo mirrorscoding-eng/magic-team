@@ -24,7 +24,7 @@ export function Contact({ data, settings, locale }: { data: CT; settings: Settin
           </h2>
           <p className="lead reveal mt-5" style={{ ["--d" as string]: 2 }}>{t(data.subtitle, locale)}</p>
           <ul className="reveal mt-10 space-y-3 text-lilac/80" style={{ ["--d" as string]: 3 }}>
-            <li><a className="flex items-center gap-3 hover:text-white" href={`mailto:${settings.email}`}><Icon name="mail" /> <span className="font-latin">{settings.email}</span></a></li>
+            {settings.email && <li><a className="flex items-center gap-3 hover:text-white" href={`mailto:${settings.email}`}><Icon name="mail" /> <span className="font-latin">{settings.email}</span></a></li>}
             <li><a className="flex items-center gap-3 hover:text-white" href={`https://wa.me/${settings.whatsapp}`} target="_blank" rel="noopener noreferrer"><Icon name="whatsapp" /> <span className="font-latin" dir="ltr">{settings.phone}</span></a></li>
             <li className="flex items-center gap-3"><Icon name="pin" /> {t(settings.address, locale)}</li>
           </ul>

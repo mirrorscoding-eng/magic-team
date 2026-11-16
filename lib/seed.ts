@@ -444,14 +444,14 @@ export const seed: Content = {
       ar: "وكالة تسويق إبداعية: استراتيجية، إدارة حملات، محتوى، وهوية بصرية.",
       en: "A creative marketing agency: strategy, campaign management, content and branding.",
     },
-    email: "hello@magicteam.co",
+    email: "",
     phone: "+964 780 023 0320",
     whatsapp: "9647800230320",
     address: { ar: "بغداد - القادسية", en: "Al Qadisiya, Baghdad" },
     instagram: "https://instagram.com/magicteam.1",
-    tiktok: "https://tiktok.com/",
-    linkedin: "https://linkedin.com/",
-    notice: { ar: "نسخة تصميم أولية · المحتوى والأرقام تجريبية", en: "Design preview · content and numbers are sample data" },
+    tiktok: "",
+    linkedin: "",
+    notice: { ar: "", en: "" },
     wave: { enabled: true, strength: 50, visibility: 50, speed: 50, spacing: 34 },
     sections: [
       { key: "hero", visible: true },
@@ -1131,38 +1131,7 @@ export const seed: Content = {
           "image": "/mock/featured/zone-checkout-v2.jpg"
         }
       ],
-      "stats": [
-        {
-          "value": {
-            "ar": "+٣٨٪",
-            "en": "+38%"
-          },
-          "label": {
-            "ar": "مبيعات الرف بعد التفعيل",
-            "en": "Shelf sales after activation"
-          }
-        },
-        {
-          "value": {
-            "ar": "٧٠٪",
-            "en": "70%"
-          },
-          "label": {
-            "ar": "من قرارات الشراء تصير داخل المحل",
-            "en": "of buying decisions happen in-store"
-          }
-        },
-        {
-          "value": {
-            "ar": "+٤٠",
-            "en": "40+"
-          },
-          "label": {
-            "ar": "فرع نتابعه أسبوعياً",
-            "en": "branches audited weekly"
-          }
-        }
-      ],
+      "stats": [],
       "image": "/mock/featured/trade-cover-v3.jpg"
     },
     "embedded": {
@@ -1352,38 +1321,7 @@ export const seed: Content = {
           }
         }
       ],
-      "stats": [
-        {
-          "value": {
-            "ar": "٢٤ ساعة",
-            "en": "24h"
-          },
-          "label": {
-            "ar": "من الفكرة للنشر",
-            "en": "from idea to post"
-          }
-        },
-        {
-          "value": {
-            "ar": "+١٥",
-            "en": "15+"
-          },
-          "label": {
-            "ar": "موظف ماجك داخل شركات عملائنا",
-            "en": "Magic staff inside client companies"
-          }
-        },
-        {
-          "value": {
-            "ar": "صفر",
-            "en": "0"
-          },
-          "label": {
-            "ar": "توظيف أو إدارة عليكم",
-            "en": "hiring or HR on your side"
-          }
-        }
-      ],
+      "stats": [],
       "image": "/mock/featured/embedded-cover-v3.jpg",
       "hqImage": "/mock/featured/place-hq-v2.jpg"
     }
@@ -1409,14 +1347,7 @@ export const seed: Content = {
         body: { ar: "داشبورد مباشر يوريك كل دينار وين راح وشنو جاب.", en: "A live dashboard showing where every dinar went and what it brought back." },
       },
     ],
-    members: [
-      { name: { ar: "زينب علي", en: "Zainab Ali" }, role: { ar: "مديرة الحسابات", en: "Account director" }, photo: "/mock/team/zainab.svg", color: "orchid" },
-      { name: { ar: "علي حسين", en: "Ali Hussein" }, role: { ar: "استراتيجي تسويق", en: "Strategist" }, photo: "/mock/team/ali.svg", color: "cyan" },
-      { name: { ar: "مريم كاظم", en: "Maryam Kadhim" }, role: { ar: "مصممة", en: "Designer" }, photo: "/mock/team/maryam.svg", color: "yellow" },
-      { name: { ar: "حسن جاسم", en: "Hassan Jasim" }, role: { ar: "مدير حملات", en: "Ads manager" }, photo: "/mock/team/hassan.svg", color: "green" },
-      { name: { ar: "نور الهدى", en: "Noor Alhuda" }, role: { ar: "كاتبة محتوى", en: "Copywriter" }, photo: "/mock/team/noor.svg", color: "lilac" },
-      { name: { ar: "مصطفى رعد", en: "Mustafa Raad" }, role: { ar: "مصور ومونتير", en: "Videographer" }, photo: "/mock/team/mustafa.svg", color: "cyan" },
-    ],
+    members: [],
   },
   cases: {
     eyebrow: { ar: "قصص نجاح", en: "Case stories" },
@@ -1518,22 +1449,5 @@ export const seed: Content = {
       { ar: "محتوى وتصوير", en: "Content & production" },
     ],
   },
-  presentations: [
-    {
-      slug: "restaurant-pitch",
-      client: "Golden Grill",
-      clientLogo: "",
-      note: { ar: "عرض مخصص لمطعم Golden Grill", en: "A tailored deck for Golden Grill" },
-      sections: ["hero", "clients", "cases", "beforeAfter", "featured", "services", "contact"],
-      caseIds: ["og-burger", "viking-burger", "nara", "bo-ali"],
-    },
-    {
-      slug: "clinic-pitch",
-      client: "Shifa Clinics",
-      clientLogo: "",
-      note: { ar: "عرض مخصص لعيادات الشفاء", en: "A tailored deck for Shifa Clinics" },
-      sections: ["hero", "team", "cases", "beforeAfter", "featured", "services", "contact"],
-      caseIds: ["geogres", "vita-home"],
-    },
-  ],
+  presentations: [],
 };

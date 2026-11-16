@@ -10,7 +10,7 @@ export function Team({ data, locale }: { data: TeamT; locale: Locale }) {
 
   return (
     <section ref={ref} id="team" className={`relative overflow-x-clip py-28 md:py-36 ${shown ? "is-shown" : ""}`}>
-      <div className="mx-auto grid max-w-6xl items-center gap-14 px-5 lg:grid-cols-[1fr_1.15fr]">
+      <div className={`mx-auto grid max-w-6xl items-center gap-14 px-5 ${members.length ? "lg:grid-cols-[1fr_1.15fr]" : ""}`}>
         <div>
           <SectionHead eyebrow={data.eyebrow} title={data.title} subtitle={data.subtitle} locale={locale} />
           <ul className="mt-10 space-y-4">
@@ -29,6 +29,7 @@ export function Team({ data, locale }: { data: TeamT; locale: Locale }) {
         </div>
 
         {/* Member cards */}
+        {members.length > 0 && (
         <div className="relative">
           <div className="absolute -inset-8 rounded-[3rem] bg-orchid/15 blur-3xl" aria-hidden />
           <div className="relative grid grid-cols-2 gap-4 sm:grid-cols-3">
@@ -58,6 +59,7 @@ export function Team({ data, locale }: { data: TeamT; locale: Locale }) {
             ))}
           </div>
         </div>
+        )}
       </div>
     </section>
   );
