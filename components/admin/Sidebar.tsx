@@ -15,6 +15,7 @@ const PAGE_HELP: Record<string, string> = {
   "/admin/messages": "الطلبات اللي يرسلها الزوار من نموذج التواصل بالموقع.",
   "/admin/quotes": "سوّي عروض أسعار بتصميم ماجك ونزّلها PDF جاهزة للعميل.",
   "/admin/invoices": "فواتير بتصميم رسمي وختم الحالة، وتگدر تحوّل أي عرض سعر لفاتورة.",
+  "/admin/password": "غيّر كلمة مرور الدخول للوحة التحكم.",
   "/admin/plans": "خطط واستراتيجيات تسويقية بشكل مجلة، تنزل PDF بغلاف وأقسام مرقمة.",
   ...Object.fromEntries(SCHEMAS.map((s) => [`/admin/${s.key}`, s.description])),
 };
@@ -54,6 +55,7 @@ const GROUPS: { key: string; title: string; items: { href: string; label: string
       { href: "/admin/presentations", label: "العروض المخصصة", icon: "present" },
       { href: "/admin/messages", label: "الرسائل", icon: "mail" },
       { href: "/admin/settings", label: "الإعدادات", icon: "shield" },
+      { href: "/admin/password", label: "كلمة المرور", icon: "lock" },
     ],
   },
 ];

@@ -3,22 +3,43 @@ import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
+import { checkPassword, currentStamp, setPassword } from "@/lib/password";
 import { createToken, SESSION_COOKIE } from "@/lib/session";
 import { deleteMessage as dbDeleteMessage, getContent, resetContent, saveContentKey, setMessageRead as dbSetMessageRead } from "@/lib/store";
 import { SECTION_KEYS, type Content, type ContentKey, type SectionKey } from "@/lib/types";
 
 const KEYS: ContentKey[] = ["settings", "hero", "clients", "featured", "team", "gallery", "cases", "beforeAfter", "manifesto", "services", "contact", "presentations"];
 
+async function startSession(stamp: string) {
+  const { token, maxAge } = await createToken(stamp);
+  (await cookies()).set(SESSION_COOKIE, token, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", path: "/", maxAge });
+}
+
 export async function login(_prev: { error?: string } | null, form: FormData) {
   const pass = String(form.get("password") ?? "");
-  const expected = process.env.ADMIN_PASSWORD;
-  if (!expected || pass !== expected) {
+  if (!pass || !(await checkPassword(pass))) {
     await new Promise((r) => setTimeout(r, 600));
     return { error: "كلمة المرور غير صحيحة" };
   }
-  const { token, maxAge } = await createToken();
-  (await cookies()).set(SESSION_COOKIE, token, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", path: "/", maxAge });
+  await startSession(await currentStamp());
   redirect("/admin");
+}
+
+export async function changePassword(_prev: { ok?: boolean; error?: string } | null, form: FormData) {
+  await requireAdmin();
+  const current = String(form.get("current") ?? "");
+  const next = String(form.get("next") ?? "");
+  const confirm = String(form.get("confirm") ?? "");
+  if (!(await checkPassword(current))) {
+    await new Promise((r) => setTimeout(r, 600));
+    return { error: "كلمة المرور الحالية غير صحيحة" };
+  }
+  if (next.length < 8) return { error: "كلمة المرور الجديدة لازم تكون 8 أحرف على الأقل" };
+  if (next !== confirm) return { error: "تأكيد كلمة المرور ما يطابق الجديدة" };
+  if (next === current) return { error: "كلمة المرور الجديدة نفس الحالية" };
+  // new stamp signs out every other device; keep this one signed in
+  await startSession(await setPassword(next));
+  return { ok: true };
 }
 
 export async function logout() {

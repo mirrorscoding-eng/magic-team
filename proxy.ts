@@ -5,7 +5,7 @@ import { SESSION_COOKIE, verifyToken } from "./lib/session";
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   if (pathname.startsWith("/admin/login")) return NextResponse.next();
-  const ok = await verifyToken(request.cookies.get(SESSION_COOKIE)?.value);
+  const ok = !!(await verifyToken(request.cookies.get(SESSION_COOKIE)?.value));
   if (!ok) return NextResponse.redirect(new URL("/admin/login", request.url));
   return NextResponse.next();
 }

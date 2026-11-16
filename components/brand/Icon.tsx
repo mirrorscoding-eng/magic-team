@@ -35,6 +35,7 @@ const P: Record<string, React.ReactNode> = {
   building: <><path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M16 9h2a2 2 0 0 1 2 2v10M2 21h20" /><path d="M8 7h1M11 7h1M8 11h1M11 11h1M8 15h1M11 15h1" /></>,
   chart: <><path d="M4 20V4M4 20h16" /><path d="m7 15 4-4 3 3 5-6" /></>,
   receipt: <><path d="M6 3h12v18l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5L6 21z" /><path d="M9 8h6M9 12h6M9 16h3" /></>,
+  lock: <><rect x="5" y="10.5" width="14" height="10" rx="2" /><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3M12 14.5v2.5" /></>,
   door: <><path d="M5 21V4a1 1 0 0 1 1-1h9v18" /><path d="M15 5h3a1 1 0 0 1 1 1v15M3 21h18" /><circle cx="12" cy="12" r=".9" /></>,
 };
 
