@@ -48,3 +48,4 @@ data/uploads/*
 
 # raw client material (642MB) — optimized copies live in public/work and public/clients
 /مصادر/
+!.env.example

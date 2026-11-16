@@ -75,21 +75,25 @@ function LInput({ value, onChange, multiline }: { value: L; onChange: (v: L) => 
   );
 }
 
-/** Streams the raw file to /api/upload (no multipart) so large videos work, with progress. */
-function uploadFile(f: File, onProgress: (pct: number) => void): Promise<string> {
+/**
+ * Asks /api/upload for a signed Supabase Storage URL, then PUTs the raw file straight there
+ * (with progress) so large videos never pass through the server.
+ */
+async function uploadFile(f: File, onProgress: (pct: number) => void): Promise<string> {
+  const res = await fetch("/api/upload", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ type: f.type, size: f.size }),
+  });
+  const j: { uploadUrl?: string; publicUrl?: string; error?: string } = await res.json().catch(() => ({}));
+  if (!res.ok || !j.uploadUrl || !j.publicUrl) throw new Error(j.error || "فشل الرفع");
+  const { uploadUrl, publicUrl } = j;
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", "/api/upload");
+    xhr.open("PUT", uploadUrl);
     xhr.setRequestHeader("Content-Type", f.type || "application/octet-stream");
     xhr.upload.onprogress = (e) => e.lengthComputable && onProgress(Math.round((e.loaded / e.total) * 100));
-    xhr.onload = () => {
-      let j: { url?: string; error?: string } = {};
-      try {
-        j = JSON.parse(xhr.responseText);
-      } catch {}
-      if (xhr.status >= 200 && xhr.status < 300 && j.url) resolve(j.url);
-      else reject(new Error(j.error || "فشل الرفع"));
-    };
+    xhr.onload = () => (xhr.status >= 200 && xhr.status < 300 ? resolve(publicUrl) : reject(new Error("فشل الرفع")));
     xhr.onerror = () => reject(new Error("انقطع الاتصال أثناء الرفع"));
     xhr.send(f);
   });

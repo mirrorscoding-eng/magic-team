@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
 import { createToken, SESSION_COOKIE } from "@/lib/session";
-import { getContent, resetContent, saveContentKey, updateMessages } from "@/lib/store";
+import { deleteMessage as dbDeleteMessage, getContent, resetContent, saveContentKey, setMessageRead as dbSetMessageRead } from "@/lib/store";
 import { SECTION_KEYS, type Content, type ContentKey, type SectionKey } from "@/lib/types";
 
 const KEYS: ContentKey[] = ["settings", "hero", "clients", "featured", "team", "gallery", "cases", "beforeAfter", "manifesto", "services", "contact", "presentations"];
@@ -67,13 +67,13 @@ export async function saveSections(sections: { key: SectionKey; visible: boolean
 
 export async function setMessageRead(id: string, read: boolean) {
   await requireAdmin();
-  await updateMessages((l) => l.map((m) => (m.id === id ? { ...m, read } : m)));
+  await dbSetMessageRead(id, read);
   revalidatePath("/admin", "layout");
 }
 
 export async function deleteMessage(id: string) {
   await requireAdmin();
-  await updateMessages((l) => l.filter((m) => m.id !== id));
+  await dbDeleteMessage(id);
   revalidatePath("/admin", "layout");
 }
 

@@ -1,42 +1,45 @@
 import "server-only";
-import { promises as fs } from "node:fs";
-import path from "node:path";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { seed } from "./seed";
 import { SECTION_KEYS, type Content, type ContentKey, type Message } from "./types";
 import { DOC_PREFIX, type Doc, type DocType } from "./docs";
 
 /**
- * File-based content store (data/content.json).
- * Swap this module for a database (e.g. Supabase) before deploying to serverless hosting:
- * every read/write in the app goes through these functions only.
+ * Supabase-backed store. Every read/write in the app goes through these functions only.
+ * Tables (see supabase/schema.sql): site_content, messages, documents — each row keeps the
+ * full object in a `data` jsonb column. Uploaded files live in the public `uploads` bucket.
+ * Uses the service-role key, so this module must stay server-only.
  */
-const DATA_DIR = path.join(/*turbopackIgnore: true*/ process.cwd(), "data");
-const CONTENT_FILE = path.join(DATA_DIR, "content.json");
-const MESSAGES_FILE = path.join(DATA_DIR, "messages.json");
-export const UPLOAD_DIR = path.join(DATA_DIR, "uploads");
+export const UPLOAD_BUCKET = "uploads";
+const CONTENT_ID = "site";
 
-async function readJson<T>(file: string, fallback: T): Promise<T> {
-  try {
-    return JSON.parse(await fs.readFile(file, "utf8")) as T;
-  } catch {
-    return fallback;
-  }
+let client: SupabaseClient | undefined;
+export function db() {
+  if (client) return client;
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) throw new Error("SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set");
+  client = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+  return client;
 }
 
-async function writeJson(file: string, data: unknown) {
-  await fs.mkdir(path.dirname(file), { recursive: true });
-  const tmp = `${file}.${process.pid}.tmp`;
-  await fs.writeFile(tmp, JSON.stringify(data, null, 2), "utf8");
-  await fs.rename(tmp, file);
+function check<T>(res: { data: T; error: { message: string } | null }): T {
+  if (res.error) throw new Error(`Supabase: ${res.error.message}`);
+  return res.data;
+}
+
+async function writeContent(content: Content) {
+  check(await db().from("site_content").upsert({ id: CONTENT_ID, data: content, updated_at: new Date().toISOString() }));
 }
 
 export async function getContent(): Promise<Content> {
-  const stored = await readJson<Partial<Content> | null>(CONTENT_FILE, null);
+  const row = check(await db().from("site_content").select("data").eq("id", CONTENT_ID).maybeSingle());
+  const stored = (row?.data ?? null) as Partial<Content> | null;
   if (!stored) {
-    await writeJson(CONTENT_FILE, seed);
+    await writeContent(seed);
     return structuredClone(seed);
   }
-  // fill any keys added after the file was created
+  // fill any keys added after the content was first saved
   const content = { ...structuredClone(seed), ...stored } as Content;
   // the portfolio moved from one flat list to per-project pages
   if (!Array.isArray(content.gallery?.projects)) content.gallery = structuredClone(seed.gallery);
@@ -58,39 +61,44 @@ export async function getContent(): Promise<Content> {
 export async function saveContentKey<K extends ContentKey>(key: K, value: Content[K]) {
   const content = await getContent();
   content[key] = value;
-  await writeJson(CONTENT_FILE, content);
+  await writeContent(content);
 }
 
 export async function resetContent() {
-  await writeJson(CONTENT_FILE, seed);
+  await writeContent(seed);
 }
 
+/* ---------- Contact messages ---------- */
 export async function getMessages(): Promise<Message[]> {
-  const list = await readJson<Message[]>(MESSAGES_FILE, []);
-  return list.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  const rows = check(await db().from("messages").select("data").order("created_at", { ascending: false }));
+  return (rows ?? []).map((r) => r.data as Message);
 }
 
 export async function addMessage(msg: Omit<Message, "id" | "createdAt" | "read">) {
-  const list = await readJson<Message[]>(MESSAGES_FILE, []);
-  list.push({ ...msg, id: crypto.randomUUID(), createdAt: new Date().toISOString(), read: false });
-  await writeJson(MESSAGES_FILE, list);
+  const full: Message = { ...msg, id: crypto.randomUUID(), createdAt: new Date().toISOString(), read: false };
+  check(await db().from("messages").insert({ id: full.id, created_at: full.createdAt, data: full }));
 }
 
-export async function updateMessages(fn: (list: Message[]) => Message[]) {
-  const list = await readJson<Message[]>(MESSAGES_FILE, []);
-  await writeJson(MESSAGES_FILE, fn(list));
+export async function setMessageRead(id: string, read: boolean) {
+  const row = check(await db().from("messages").select("data").eq("id", id).maybeSingle());
+  if (!row) return;
+  check(await db().from("messages").update({ data: { ...(row.data as Message), read } }).eq("id", id));
+}
+
+export async function deleteMessage(id: string) {
+  check(await db().from("messages").delete().eq("id", id));
 }
 
 /* ---------- Business documents (quotes, invoices, marketing plans) ---------- */
-const DOCS_FILE = path.join(DATA_DIR, "documents.json");
-
 export async function getDocs(type?: DocType): Promise<Doc[]> {
-  const list = await readJson<Doc[]>(DOCS_FILE, []);
-  return list.filter((d) => !type || d.type === type).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  let q = db().from("documents").select("data").order("created_at", { ascending: false });
+  if (type) q = q.eq("type", type);
+  return (check(await q) ?? []).map((r) => r.data as Doc);
 }
 
 export async function getDoc(id: string): Promise<Doc | undefined> {
-  return (await readJson<Doc[]>(DOCS_FILE, [])).find((d) => d.id === id);
+  const row = check(await db().from("documents").select("data").eq("id", id).maybeSingle());
+  return (row?.data as Doc | undefined) ?? undefined;
 }
 
 /** Next free number for this type and year, e.g. INV-2026-007. */
@@ -102,14 +110,9 @@ export async function nextDocNumber(type: DocType) {
 }
 
 export async function putDoc(doc: Doc) {
-  const list = await readJson<Doc[]>(DOCS_FILE, []);
-  const at = list.findIndex((d) => d.id === doc.id);
-  if (at >= 0) list[at] = doc;
-  else list.push(doc);
-  await writeJson(DOCS_FILE, list);
+  check(await db().from("documents").upsert({ id: doc.id, type: doc.type, created_at: doc.createdAt, data: doc }));
 }
 
 export async function removeDoc(id: string) {
-  const list = await readJson<Doc[]>(DOCS_FILE, []);
-  await writeJson(DOCS_FILE, list.filter((d) => d.id !== id));
+  check(await db().from("documents").delete().eq("id", id));
 }

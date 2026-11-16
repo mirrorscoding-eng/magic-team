@@ -1,11 +1,6 @@
-import { createWriteStream, promises as fs } from "node:fs";
-import path from "node:path";
-import { Readable, Transform } from "node:stream";
-import { pipeline } from "node:stream/promises";
-import type { ReadableStream as WebReadableStream } from "node:stream/web";
 import { NextResponse, type NextRequest } from "next/server";
 import { SESSION_COOKIE, verifyToken } from "@/lib/session";
-import { UPLOAD_DIR } from "@/lib/store";
+import { db, UPLOAD_BUCKET } from "@/lib/store";
 
 const IMAGE: Record<string, string> = {
   "image/png": "png",
@@ -22,58 +17,35 @@ const VIDEO: Record<string, string> = {
   "video/x-m4v": "m4v",
 };
 const MAX_IMAGE = 8 * 1024 * 1024;
-const MAX_VIDEO = 300 * 1024 * 1024;
-
-const tooBig = (video: boolean) => NextResponse.json({ error: video ? "الفيديو أكبر من 300MB" : "الحجم أكبر من 8MB" }, { status: 413 });
+// Supabase free plan caps a single file at 50MB
+const MAX_VIDEO = 50 * 1024 * 1024;
 
 /**
- * Accepts the raw file as the request body (Content-Type = the file's type), streamed to disk
- * so big videos never sit in memory. Multipart `file` is still accepted for older clients.
+ * Step 1 of an upload: the dashboard sends { type, size } and gets back a one-time signed URL.
+ * The browser then PUTs the file straight to Supabase Storage (Vercel functions cap bodies at 4.5MB),
+ * and stores `publicUrl` in the content.
  */
 export async function POST(req: NextRequest) {
   if (!(await verifyToken(req.cookies.get(SESSION_COOKIE)?.value))) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
-  const type = (req.headers.get("content-type") ?? "").split(";")[0].trim().toLowerCase();
-  await fs.mkdir(UPLOAD_DIR, { recursive: true });
-
-  if (type === "multipart/form-data") {
-    const file = (await req.formData()).get("file");
-    if (!(file instanceof File)) return NextResponse.json({ error: "no file" }, { status: 400 });
-    const ext = IMAGE[file.type] ?? VIDEO[file.type];
-    if (!ext) return NextResponse.json({ error: "نوع الملف غير مدعوم" }, { status: 415 });
-    const video = !!VIDEO[file.type];
-    if (file.size > (video ? MAX_VIDEO : MAX_IMAGE)) return tooBig(video);
-    const name = `${crypto.randomUUID()}.${ext}`;
-    await fs.writeFile(path.join(/*turbopackIgnore: true*/ UPLOAD_DIR, name), Buffer.from(await file.arrayBuffer()));
-    return NextResponse.json({ url: `/uploads/${name}` });
-  }
-
-  const ext = IMAGE[type] ?? VIDEO[type];
-  if (!ext) return NextResponse.json({ error: "نوع الملف غير مدعوم" }, { status: 415 });
-  if (!req.body) return NextResponse.json({ error: "no file" }, { status: 400 });
-  const video = !!VIDEO[type];
-  const max = video ? MAX_VIDEO : MAX_IMAGE;
-  if (Number(req.headers.get("content-length") ?? 0) > max) return tooBig(video);
-
-  const name = `${crypto.randomUUID()}.${ext}`;
-  const dest = path.join(/*turbopackIgnore: true*/ UPLOAD_DIR, name);
-  let size = 0;
-  const limit = new Transform({
-    transform(chunk: Buffer, _enc, cb) {
-      size += chunk.length;
-      cb(size > max ? new Error("too big") : null, chunk);
-    },
-  });
+  let body: { type?: string; size?: number };
   try {
-    await pipeline(Readable.fromWeb(req.body as unknown as WebReadableStream), limit, createWriteStream(dest));
+    body = await req.json();
   } catch {
-    await fs.rm(dest, { force: true });
-    return size > max ? tooBig(video) : NextResponse.json({ error: "فشل الرفع" }, { status: 500 });
-  }
-  if (!size) {
-    await fs.rm(dest, { force: true });
     return NextResponse.json({ error: "no file" }, { status: 400 });
   }
-  return NextResponse.json({ url: `/uploads/${name}` });
+  const type = String(body.type ?? "").toLowerCase();
+  const ext = IMAGE[type] ?? VIDEO[type];
+  if (!ext) return NextResponse.json({ error: "نوع الملف غير مدعوم" }, { status: 415 });
+  const video = !!VIDEO[type];
+  if (Number(body.size ?? 0) > (video ? MAX_VIDEO : MAX_IMAGE)) {
+    return NextResponse.json({ error: video ? "الفيديو أكبر من 50MB" : "الحجم أكبر من 8MB" }, { status: 413 });
+  }
+
+  const path = `${crypto.randomUUID()}.${ext}`;
+  const storage = db().storage.from(UPLOAD_BUCKET);
+  const { data, error } = await storage.createSignedUploadUrl(path);
+  if (error || !data) return NextResponse.json({ error: "فشل تجهيز الرفع" }, { status: 500 });
+  return NextResponse.json({ uploadUrl: data.signedUrl, publicUrl: storage.getPublicUrl(path).data.publicUrl });
 }
