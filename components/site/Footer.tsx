@@ -20,7 +20,7 @@ export function PageCta({ locale, next, showContact }: { locale: Locale; next?: 
         <div className="flex flex-wrap justify-center gap-3">
           {showContact && (
             <Link href={pageHref(locale, "contact")} className="btn btn-primary px-7! py-4! text-lg!">
-              {ar ? "خل نحچي" : "Let's talk"}
+              {ar ? "تواصل معنا" : "Contact us"}
             </Link>
           )}
           {next && (

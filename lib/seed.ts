@@ -475,7 +475,7 @@ export const seed: Content = {
       en: "We build brands that are hard to ignore — from strategy and identity to content and campaigns, all the way to the website and systems that run your business.",
     },
     ctaPrimary: { ar: "شوف أعمالنا", en: "See our work" },
-    ctaSecondary: { ar: "خل نحچي عن مشروعك", en: "Let's talk about your project" },
+    ctaSecondary: { ar: "تواصل معنا", en: "Contact us" },
     pills: [
       { label: { ar: "MARKETING", en: "MARKETING" }, color: "lilac" },
     ],
@@ -999,8 +999,8 @@ export const seed: Content = {
       "en": "From the supermarket shelf to your own offices — Magic gets on the ground with your brand."
     },
     "cta": {
-      "ar": "خل نحچي عن مشروعك",
-      "en": "Let's talk about your project"
+      "ar": "تواصل معنا",
+      "en": "Contact us"
     },
     "trade": {
       "tab": {

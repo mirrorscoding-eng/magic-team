@@ -67,7 +67,7 @@ export function Nav({ locale, pages }: { locale: Locale; pages: NavPage[] }) {
           </Link>
           {hasContact && (
             <Link href={pageHref(locale, "contact")} aria-current={current === "contact" ? "page" : undefined} className="btn btn-primary py-3! px-6!">
-              {ar ? "خل نحچي" : "Let's talk"}
+              {ar ? "تواصل معنا" : "Contact us"}
             </Link>
           )}
           <button
