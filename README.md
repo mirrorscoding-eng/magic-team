@@ -7,7 +7,7 @@ npm run dev -- -p 3100
 ```
 - الموقع: http://localhost:3100/ar (والإنكليزي على `/en`) — صفحات: `/ar/services` · `/ar/work` · `/ar/team` · `/ar/contact`
 - وضع العرض: `/ar/present` — أو عرض مخصص: `/ar/present/<slug>`
-- لوحة التحكم: http://localhost:3100/admin — كلمة المرور من `ADMIN_PASSWORD` بملف `.env.local` (انسخ `.env.example`)
+- لوحة التحكم: http://localhost:3100/admin — كلمة المرور الأولى من `ADMIN_PASSWORD` بملف `.env.local` (انسخ `.env.example`)، وبعدها تتغير من صفحة «كلمة المرور» داخل اللوحة (تنحفظ مشفّرة بـ Supabase بصف `auth` بجدول `site_content`؛ إذا نسيتها احذف هذا الصف وترجع `ADMIN_PASSWORD` تشتغل)
 
 ## وضع العرض
 الأسهم أو Space للتنقل، `F` لملء الشاشة، `Home`/`End` للبداية والنهاية. العروض المخصصة تنسوّى من لوحة التحكم ← العروض المخصصة.

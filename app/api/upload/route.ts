@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { SESSION_COOKIE, verifyToken } from "@/lib/session";
+import { isAdmin } from "@/lib/auth";
 import { db, UPLOAD_BUCKET } from "@/lib/store";
 
 const IMAGE: Record<string, string> = {
@@ -26,7 +26,7 @@ const MAX_VIDEO = 50 * 1024 * 1024;
  * and stores `publicUrl` in the content.
  */
 export async function POST(req: NextRequest) {
-  if (!(await verifyToken(req.cookies.get(SESSION_COOKIE)?.value))) {
+  if (!(await isAdmin())) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
   let body: { type?: string; size?: number };
